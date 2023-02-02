@@ -1,0 +1,98 @@
+version: '3.3'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  broker:
+    image: confluentinc/cp-kafka:7.3.0
+    container_name: broker
+    ports:
+      - "9093:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9093,PLAINTEXT_INTERNAL://broker:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_CREATE_TOPICS: "houses:1:1"
+  
+#  energy-production:
+#    image: energy-production
+#    restart: always
+#    container_name: energy-production
+#    build:
+#      context: ./energy_production
+#      dockerfile: Dockerfile
+#    volumes:
+#      - /data/energy_production
+#    depends_on:
+#      - broker
+
+  telegraf:
+    image: telegraf
+    container_name: telegraf
+    restart: always
+    volumes:
+      - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    depends_on:
+      - broker
+      - influxdb
+
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb
+    restart: always
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./influxdb/volumes/influxdb2/data:/var/lib/influxdb2
+      - ./influxdb/volumes/influxdb2/config:/etc/influxdb2
+      - ./influxdb/volumes/influxdb2/backup:/var/lib/backup
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=adminpass
+      - DOCKER_INFLUXDB_INIT_ORG=univaq
+      - DOCKER_INFLUXDB_INIT_BUCKET=houses
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-super-secret-auth-token
+      - DOCKER_INFLUXDB_INIT_ADMIN_USER=admin
+      - DOCKER_INFLUXDB_INIT_ADMIN_PASSWORD=adminpass
+      - DOCKER_INFLUXDB_HTTP_AUTH_ENABLED=true
+      - DOCKER_INFLUXDB_HTTP_LOG_ENABLED=true
+      - DOCKER_INFLUXDB_HTTP_WRITE_TRACING=false
+      - DOCKER_INFLUXDB_INIT_NO_OVERRIDE=true
+
+  nodered:
+    image: nodered/node-red:latest
+    container_name: nodered
+    restart: always
+    build:
+      context: ./nodered
+      dockerfile: Dockerfile
+    ports:
+      - "1880:1880"
+    volumes:
+      - ./nodered:/data
+      #- ./settings.js:/data/settings.js
+    depends_on:
+      - influxdb
+      - broker
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=broker:29092
+    depends_on:
+      - broker

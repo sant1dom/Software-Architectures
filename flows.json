@@ -1,0 +1,102 @@
+[
+    {
+        "id": "73a28a44.f3c3b4",
+        "type": "tab",
+        "label": "Simulate Data111",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "37b52a88de293bcd",
+        "type": "kafka-broker",
+        "name": "Local",
+        "hosts": "broker:9092",
+        "selfsign": false,
+        "usetls": false,
+        "cacert": "",
+        "clientcert": "",
+        "privatekey": "",
+        "passphrase": ""
+    },
+    {
+        "id": "e936c8f8.d1f108",
+        "type": "inject",
+        "z": "73a28a44.f3c3b4",
+        "name": "Add House",
+        "props": [
+            {
+                "p": "payload",
+                "v": "",
+                "vt": "date"
+            },
+            {
+                "p": "topic",
+                "v": "",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 60,
+        "wires": [
+            [
+                "1d5c6912.d7f5d2"
+            ]
+        ]
+    },
+    {
+        "id": "4aa66ec45b6fd43a",
+        "type": "kafka-producer",
+        "z": "73a28a44.f3c3b4",
+        "name": "",
+        "broker": "37b52a88de293bcd",
+        "topic": "houses",
+        "requireAcks": 1,
+        "ackTimeoutMs": 100,
+        "attributes": 0,
+        "x": 620,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "5b16ed9f7c633ca0",
+        "type": "debug",
+        "z": "73a28a44.f3c3b4",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 540,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "d511cd52976.2fd",
+        "type": "function",
+        "z": "73a28a44.f3c3b4",
+        "name": "House 6",
+        "func": "msg.payload = '{\"energy_production\": ' + Math.floor(Math.random() * 50) + ', \"energy_consumption\": ' + Math.floor(Math.random() * 50) +', \"house_id\":141 }';\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 100,
+        "wires": [
+            [
+                "4aa66ec45b6fd43a",
+                "5b16ed9f7c633ca0"
+            ]
+        ]
+    }
+]

@@ -1,0 +1,7 @@
+# created by virtualenv automatically
+.idea
+*.swp
+**/Lib/
+**/.npm/
+**/node_modules
+**/volumes
