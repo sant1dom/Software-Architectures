@@ -162,8 +162,8 @@
         "requireAcks": 1,
         "ackTimeoutMs": 100,
         "attributes": 0,
-        "x": 960,
-        "y": 120,
+        "x": 920,
+        "y": 200,
         "wires": []
     },
     {
@@ -187,13 +187,13 @@
         "type": "function",
         "z": "73a28a44.f3c3b4",
         "name": "House df9c2125.7d1d65",
-        "func": "msg.payload.powerforecast = Math.abs(msg.payload.powerforecast + Math.random());\nmsg.payload = '{\"energy_production\": ' + msg.payload.powerforecast + ', \"energy_consumption\": ' + global.get(\"housePowerConsumption\")(new Date()) + ', \"house_id\":140 }';\nreturn msg;",
+        "func": "if (msg.payload.powerforecast != 0)\n    msg.payload.powerforecast = Math.abs(msg.payload.powerforecast + Math.random());\nmsg.payload = '{\"energy_production\": ' + msg.payload.powerforecast + ', \"energy_consumption\": ' + global.get(\"housePowerConsumption\")(new Date()) + ', \"house_id\":140 }';\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 490,
+        "x": 510,
         "y": 200,
         "wires": [
             [
@@ -207,7 +207,7 @@
         "type": "function",
         "z": "73a28a44.f3c3b4",
         "name": "House .1d79ddf25512c6",
-        "func": "msg.payload.powerforecast = Math.abs(msg.payload.powerforecast + Math.random());\nmsg.payload = '{\"energy_production\": ' + msg.payload.powerforecast + ', \"energy_consumption\": ' + global.get(\"housePowerConsumption\")(new Date()) + ', \"house_id\":141 }';\nreturn msg;",
+        "func": "if (msg.payload.powerforecast != 0)\n    msg.payload.powerforecast = Math.abs(msg.payload.powerforecast + Math.random());\nmsg.payload = '{\"energy_production\": ' + msg.payload.powerforecast + ', \"energy_consumption\": ' + global.get(\"housePowerConsumption\")(new Date()) + ', \"house_id\":141 }';\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -227,7 +227,7 @@
         "type": "function",
         "z": "73a28a44.f3c3b4",
         "name": "House 15cf2.dd912756d",
-        "func": "msg.payload.powerforecast = Math.abs(msg.payload.powerforecast + Math.random());\nmsg.payload = '{\"energy_production\": ' + msg.payload.powerforecast + ', \"energy_consumption\": ' + global.get(\"housePowerConsumption\")(new Date()) +', \"house_id\":142 }';\nreturn msg;",
+        "func": "if (msg.payload.powerforecast != 0)\n    msg.payload.powerforecast = Math.abs(msg.payload.powerforecast + Math.random());\nmsg.payload = '{\"energy_production\": ' + msg.payload.powerforecast + ', \"energy_consumption\": ' + global.get(\"housePowerConsumption\")(new Date()) +', \"house_id\":142 }';\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -247,7 +247,7 @@
         "type": "function",
         "z": "73a28a44.f3c3b4",
         "name": "House 221f67d5.d51d9c",
-        "func": "msg.payload.powerforecast = Math.abs(msg.payload.powerforecast + Math.random());\nmsg.payload = '{\"energy_production\": ' + msg.payload.powerforecast + ', \"energy_consumption\": ' + global.get(\"housePowerConsumption\")(new Date()) + ', \"house_id\":143 }';\nreturn msg;",
+        "func": "if (msg.payload.powerforecast != 0)\n    msg.payload.powerforecast = Math.abs(msg.payload.powerforecast + Math.random());\nmsg.payload = '{\"energy_production\": ' + msg.payload.powerforecast + ', \"energy_consumption\": ' + global.get(\"housePowerConsumption\")(new Date()) + ', \"house_id\":143 }';\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -267,7 +267,7 @@
         "type": "function",
         "z": "73a28a44.f3c3b4",
         "name": "House d1292.57cfd615d",
-        "func": "msg.payload.powerforecast = Math.abs(msg.payload.powerforecast + Math.random());\nmsg.payload = '{\"energy_production\": ' + msg.payload.powerforecast + ', \"energy_consumption\": ' + global.get(\"housePowerConsumption\")(new Date()) + ', \"house_id\":144 }';\nreturn msg;",
+        "func": "if (msg.payload.powerforecast != 0)\n    msg.payload.powerforecast = Math.abs(msg.payload.powerforecast + Math.random());\nmsg.payload = '{\"energy_production\": ' + msg.payload.powerforecast + ', \"energy_consumption\": ' + global.get(\"housePowerConsumption\")(new Date()) + ', \"house_id\":144 }';\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -303,8 +303,7 @@
                 "15cf2.dd912756d",
                 "d1292.57cfd615d",
                 "221f67d5.d51d9c",
-                "df9c2125.7d1d65",
-                "5b16ed9f7c633ca0"
+                "df9c2125.7d1d65"
             ]
         ]
     },
@@ -319,7 +318,7 @@
         "initialize": "var housePowerConsumption = function (timestamp) {\n    let hour = timestamp.getHours();\n    let minute = timestamp.getMinutes();\n    let consumption = 0;\n\n    // Morning (6am to 9am)\n    if (hour >= 6 && hour < 9) {\n        consumption = 1 + Math.random() * 1 + (hour - 6) * 0.5 + (minute / 60) * 0.5;\n    }\n    // Afternoon (12pm to 2pm)\n    else if (hour >= 12 && hour < 14) {\n        consumption = 1 + Math.random() * 0.5 + (hour - 12) * 0.25 + (minute / 60) * 0.25;\n    }\n    // Evening (6pm to 10pm)\n    else if (hour >= 18 && hour < 22) {\n        consumption = 1 + Math.random() * 1 + (hour - 18) * 0.5 + (minute / 60) * 0.5;\n    }\n    // Night (10pm to 6am)\n    else {\n        consumption = 0.5 + Math.random() * 0.5;\n    }\n\n    return consumption;\n}\n\nglobal.set(\"housePowerConsumption\", housePowerConsumption);",
         "finalize": "",
         "libs": [],
-        "x": 490,
+        "x": 510,
         "y": 120,
         "wires": [
             []

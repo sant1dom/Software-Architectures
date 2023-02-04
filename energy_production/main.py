@@ -29,23 +29,6 @@ def add_house(lat, lon, tilt, orientation, altitude, area, number, efficiency):
     new_house["y"] = y
     new_house["wires"] = [["4aa66ec45b6fd43a", "5b16ed9f7c633ca0"]]
 
-    solar_panel = {}
-    solar_panel["id"] = f"{id}-solar-panel"
-    solar_panel["type"] = "solar power forecast"
-    solar_panel["z"] = "73a28a44.f3c3b4"
-    solar_panel["name"] = f"Solar panel {solar_panel['id']}"
-    solar_panel["lat"] = lat
-    solar_panel["lon"] = lon
-    solar_panel["tilt"] = tilt
-    solar_panel["orientation"] = orientation
-    solar_panel["altitude"] = altitude
-    solar_panel["area"] = area
-    solar_panel["number"] = number
-    solar_panel["efficiency"] = efficiency
-    solar_panel["x"] = 340
-    solar_panel["y"] = y - 100
-    solar_panel["wires"] = [new_house["id"]]
-
     flows["flows"].append(new_house)
     flows["flows"].append(solar_panel)
 

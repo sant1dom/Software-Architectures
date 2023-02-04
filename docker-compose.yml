@@ -110,3 +110,13 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=adminpass
     depends_on:
       - influxdb
+
+  authreg:
+    image: authreg
+    container_name: authreg
+    restart: always
+    build:
+      context: ./authreg
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
