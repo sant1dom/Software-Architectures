@@ -124,17 +124,6 @@
         }
     },
     {
-        "id": "b7f34b738c9997d9",
-        "type": "ui_group",
-        "name": "Default",
-        "tab": "bc65738dadc6a2f0",
-        "order": 1,
-        "disp": true,
-        "width": "6",
-        "collapse": false,
-        "className": ""
-    },
-    {
         "id": "e936c8f8.d1f108",
         "type": "inject",
         "z": "73a28a44.f3c3b4",
@@ -304,7 +293,7 @@
         "orientation": "180",
         "altitude": "0",
         "area": "1",
-        "number": "30",
+        "number": "3",
         "efficiency": "0.20",
         "x": 180,
         "y": 340,
@@ -314,7 +303,8 @@
                 "15cf2.dd912756d",
                 "d1292.57cfd615d",
                 "221f67d5.d51d9c",
-                "df9c2125.7d1d65"
+                "df9c2125.7d1d65",
+                "5b16ed9f7c633ca0"
             ]
         ]
     },

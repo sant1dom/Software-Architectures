@@ -96,3 +96,17 @@ services:
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=broker:29092
     depends_on:
       - broker
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana_dashboard
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/grafana-storage:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=adminpass
+    depends_on:
+      - influxdb
