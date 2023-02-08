@@ -8,7 +8,7 @@ class Auth extends Service
 {
 	static function login()
 	{
-	    $url = "http://authreg:8081/login";
+	    $url = "http://authreg:8081/login?";
 	    $fields = ["email", "password"];
 		return static::send($url, $fields);
 	}

@@ -29,7 +29,7 @@ class Service
 		$data = [];
 		foreach($fields as $field)
 		{
-		    $data[$field] = static::sanitize($_REQUEST[field]);
+		    $data[$field] = static::sanitize($_REQUEST[$field]);
 		}
 
         $options = [

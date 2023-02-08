@@ -1,10 +1,19 @@
-FROM php:8.1-apache
+FROM php:8.1-fpm-alpine
 
-RUN curl -sS https://getcomposer.org/installer | php -- \
-     --install-dir=/usr/local/bin --filename=composer
+RUN apk add --no-cache \
+        bash \
+        git \
+        nano
 
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+WORKDIR /var/www/app
 
-WORKDIR /app
 COPY . .
-RUN composer install
+
+RUN docker-php-ext-install pdo_mysql \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+    && composer install --no-dev --optimize-autoloader \
+    && chown -R www-data:www-data /var/www/app
+
+USER www-data
+
+CMD ["php", "artisan", "serve", "--host", "0.0.0.0", "--port", "8084"]

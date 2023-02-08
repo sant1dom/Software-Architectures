@@ -148,6 +148,8 @@ services:
       - bills
       - nodered
       - influxdb
+    volumes:
+      - ./PHP/sa_api:/var/www/html
 
   frontend:
     image: frontend
@@ -160,3 +162,5 @@ services:
       - "8084:8084"
     depends_on:
       - api_gateway
+    volumes:
+      - ./PHP/sa_dash:/var/www/html
