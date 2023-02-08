@@ -7,49 +7,42 @@ class Bill extends Service
 {
 	static function getAll()
 	{
-		//no need to check the validity of $auth, because the Auth::get method always return a valid user or dies
-		$auth   = Auth::get();
-		$userid = $auth["userid"];
+	    $data = [];
 
-		//TODO
-		$url = "http://bills:8082/bills?userid=" . $userid;
-		$raw_response = file_get_contents($url);
+	    $auth   = Auth::get();
+		$data["userid"] = $$auth["userid"];
 
-		$bills = json_decode($raw_response);
-		if (!is_array($bills))
-		{
-			Out::send("ERROR", "", $raw_response);
-		}
-
-		return $bills;
+		$url = "http://bills:8082/getAll";
+	    $fields = ["userid"];
+		return static::send($url, $data);
 	}
 
 	static function getId()
 	{
-		//no need to check the validity of $auth, because the Auth::get method always return a valid user or dies
-		$auth   = Auth::get();
-		$userid = $auth["userid"];
-
-		$id = static::sanitize($_REQUEST["id"]);
-
-		//TODO
-		$url = "http://bills:8082/bills?userid=" . $userid;
-		$raw_response = file_get_contents($url);
-
-		$bills = json_decode($raw_response);
-		if (!is_array($bills))
+	    $data = [];
+	    $fields = ["billid"];
+	    foreach ($fields as $field)
 		{
-			Out::send("ERROR", "", $raw_response);
+		    $data[$field] = static::sanitize($_REQUEST[field]);
 		}
 
-		foreach($bills as $bill)
-		{
-			if($bill->id == $id)
-			{
-				return $bill;
-			}
-		}
+	    $auth   = Auth::get();
+		$data["userid"] = $$auth["userid"];
 
-		return null;
+		$url = "http://bills:8082/getId";
+	    $fields = ["userid"];
+		return static::send($url, $data);
+	}
+
+	static function makeRandom()
+	{
+	    $data = [];
+
+	    $auth   = Auth::get();
+		$data["userid"] = $$auth["userid"];
+
+		$url = "http://bills:8082/makeRandom";
+	    $fields = ["userid"];
+		return static::send($url, $data);
 	}
 }
