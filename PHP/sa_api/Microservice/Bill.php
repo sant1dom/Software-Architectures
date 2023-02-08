@@ -1,7 +1,6 @@
 <?php
 
 namespace Microservice;
-use Out;
 
 class Bill extends Service
 {

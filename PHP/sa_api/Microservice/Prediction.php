@@ -2,7 +2,6 @@
 
 namespace Microservice;
 
-use Out;
 use Microservice\Auth;
 
 class Prediction extends Service

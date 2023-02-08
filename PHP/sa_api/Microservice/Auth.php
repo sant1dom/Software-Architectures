@@ -2,8 +2,6 @@
 
 namespace Microservice;
 
-use Out;
-
 class Auth extends Service
 {
 	static function login()

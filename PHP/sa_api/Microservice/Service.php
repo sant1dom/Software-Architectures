@@ -1,6 +1,7 @@
 <?php
 
 namespace Microservice;
+use Out;
 
 class Service
 {
