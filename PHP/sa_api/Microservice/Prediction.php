@@ -9,49 +9,37 @@ class Prediction extends Service
 {
 	static function getConsumption()
 	{
-		//no need to check the validity of $auth, because the Auth::get method always return a valid user or dies
-		$auth   = Auth::get();
-		$userid = $auth["userid"];
+	    $data = [];
 
-		//TODO
+	    $auth   = Auth::get();
+		$data["userid"] = $$auth["userid"];
 
-		$prediction = [
-			"info1" => 1,
-			"info2" => 2,
-		];
-
-		return $prediction;
+		$url = "http://prediction:8085/getConsumption";
+	    $fields = ["userid"];
+		return static::send($url, $data);
 	}
 
 	static function getProduction()
 	{
-		//no need to check the validity of $auth, because the Auth::get method always return a valid user or dies
-		$auth   = Auth::get();
-		$userid = $auth["userid"];
+	    $data = [];
 
-		//TODO
+	    $auth   = Auth::get();
+		$data["userid"] = $$auth["userid"];
 
-		$prediction = [
-			"info1" => 1,
-			"info2" => 2,
-		];
-
-		return $prediction;
+		$url = "http://prediction:8085/getProduction";
+	    $fields = ["userid"];
+		return static::send($url, $data);
 	}
 
 	static function getFuture()
 	{
-		//no need to check the validity of $auth, because the Auth::get method always return a valid user or dies
-		$auth   = Auth::get();
-		$userid = $auth["userid"];
+	    $data = [];
 
-		//TODO
+	    $auth   = Auth::get();
+		$data["userid"] = $$auth["userid"];
 
-		$prediction = [
-			"info1" => 1,
-			"info2" => 2,
-		];
-
-		return $prediction;
+		$url = "http://prediction:8085/getFuture";
+	    $fields = ["userid"];
+		return static::send($url, $data);
 	}
 }
