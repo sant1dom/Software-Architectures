@@ -133,3 +133,28 @@ services:
     depends_on:
       - authreg
       - influxdb
+
+  api_gateway:
+    image: api_gateway
+    container_name: api_gateway
+    restart: always
+    build:
+      context: ./PHP/sa_api
+      dockerfile: Dockerfile
+    command: 'php artisan serve --host=0.0.0.0 --port=8083'
+    volumes:
+        - ./PHP/sa_dash:/app
+    ports:
+        - "8083:8083"
+
+  frontend:
+    image: frontend
+    container_name: frontend
+    restart: always
+    build:
+      context: ./PHP/sa_dash
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8084"
+    depends_on:
+      - api_gateway
