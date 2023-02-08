@@ -23,4 +23,31 @@ class Service
 
 		return $string;
 	}
+
+	static function send($url, $fields)
+    {
+		$data = [];
+		foreach($fields as $field)
+		{
+		    $data[$field] = static::sanitize($_REQUEST[field]);
+		}
+
+        $options = [
+            "http" => [
+                "header"  => "Content-type: application/json",
+                "method"  => "POST",
+                "content" => json_encode($data),
+            ],
+        ];
+        $context  = stream_context_create($options);
+        $raw_response = file_get_contents($url, false, $context);
+
+		$results = json_decode($raw_response);
+		if (!is_object($auth))
+		{
+			Out::send("ERROR", $raw_response);
+		}
+
+		return $results;
+    }
 }

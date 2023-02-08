@@ -22,7 +22,6 @@ class AuthRequestRegister extends FormRequest
 				Password::defaults(),
 			],
 			//"password_confirmation" => "required",
-			"username" => "required",
 			"name"     => "required",
 			"surname"  => "required",
 			"phone"    => "max:255",

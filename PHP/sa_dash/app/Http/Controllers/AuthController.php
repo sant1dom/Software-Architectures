@@ -99,12 +99,11 @@ class AuthController extends Controller
 
 			$email    = $fields['email'];
 			$password = $fields['password'];
-			$username = $fields['username'];
 			$name     = $fields['name'];
 			$surname  = $fields['surname'];
 			$phone    = $fields['phone'];
 
-			$auth = Auth::register($email, $password, $username, $name, $surname, $phone);
+			$auth = Auth::register($email, $password, $name, $surname, $phone);
 
 			$request->session()->put('auth', $auth);
 			return redirect(route("bill.index"));
@@ -139,5 +138,5 @@ class AuthController extends Controller
 
 		return redirect(route("auth.login"));
 	}
-	
+
 }
