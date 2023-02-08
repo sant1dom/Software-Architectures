@@ -1,5 +1,5 @@
 <?php
-
+require_once __DIR__ . '/../Out.php';
 namespace Microservice;
 use Out;
 
@@ -25,12 +25,12 @@ class Service
 		return $string;
 	}
 
-	static function send($url, $data)
+	static function send($url, $data, $method)
     {
         $options = [
             "http" => [
                 "header"  => "Content-type: application/json",
-                "method"  => "POST",
+                "method"  => $method,
                 "content" => json_encode($data),
             ],
         ];

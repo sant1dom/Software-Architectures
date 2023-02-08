@@ -6,7 +6,7 @@ class Auth extends Service
 {
 	static function login()
 	{
-	    $url = "http://authreg:8081/login";
+	    $url = "http://authreg:8081/login?";
 
 	    $data = [];
 	    $fields = ["email", "password"];
@@ -15,7 +15,7 @@ class Auth extends Service
 		    $data[$field] = static::sanitize($_REQUEST[$field]);
 		}
 
-		return static::send($url, $data);
+		return static::send($url, $data, "POST");
 	}
 
 	static function register()
@@ -29,7 +29,7 @@ class Auth extends Service
 		    $data[$field] = static::sanitize($_REQUEST[$field]);
 		}
 
-		return static::send($url, $data);
+		return static::send($url, $data, "POST");
 	}
 
 	static function get()
@@ -57,6 +57,6 @@ class Auth extends Service
 		    $data[$field] = static::sanitize($_REQUEST[$field]);
 		}
 
-		return static::send($url, $data);
+		return static::send($url, $data, "POST");
 	}
 }
