@@ -40,9 +40,6 @@ bills = []
 
 @app.get("/makeRandom")
 def makeRandom(userid):
-    if len(bills) > 0:
-        return;
-
     address = fake.address()
     dates = [
         "Jan 2022",
@@ -58,8 +55,10 @@ def makeRandom(userid):
         "Nov 2022",
         "Dec 2022"
     ]
-    for i in range(12):
 
+    mybills = []
+
+    for i in range(12):
         bill = Bill(
             userid=userid,
             energy_production=random.uniform(250, 350),
@@ -71,6 +70,9 @@ def makeRandom(userid):
         )
 
         bills[bill.billid] = bill
+        mybills[bill.billid] = bill
+
+    return mybills
 
 @app.get("/getAll")
 def getAll(userid: str):
@@ -79,6 +81,9 @@ def getAll(userid: str):
     for bill in bills:
         if bill.userid == userid:
             mybills.append(bill)
+
+    if not len(bills):
+        return makeRandom(userid)
 
     return bills
 
