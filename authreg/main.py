@@ -40,15 +40,8 @@ class User(BaseModel):
     phone: str
 
 
-class RegisterUser(BaseModel):
-    email: str
-    password: str
-    name: str
-    surname: str
-    phone: str
-
 admin = {
-    "userid": 1,
+    "userid": 0,
     "role": "admin",
     "email": "admin@energy.org",
     "password": "bfcce2c19c8563fd4aa66f6ec607341ff25e5f6fe7fa520d7d1242d871385f23a3e8e80093120b4877d79535e10b182ae2ec8937d1f72f091e7178c9e4ff0f11",
@@ -64,18 +57,24 @@ sessions = []
 
 
 @app.post("/register")
-async def register(reg_user: RegisterUser):
+async def register(email: str, password: str, name: str, surname: str, phone: str):
 
     #Check Email
     for user in users:
-        if user.email == reg_user.email:
+        if user.email == email:
             return "Email already exists"
 
+
     #Create and store User
-    user = User(**reg_user.dict())
+    user = User()
+    user.userid = len(users)
+    user.email = email
+    user.name = name
+    user.surname = surname
+    user.phone = phone
+
     hash = hashlib.blake2b(user["password"].encode()).hexdigest()
     user.password = hash
-    user.userid = len(users) + 1
 
     users[user.userid] = user
 
@@ -91,7 +90,7 @@ async def register(reg_user: RegisterUser):
     return retuser
 
 
-@app.post("/login")
+@app.get("/login")
 async def login(email: str, password: str):
 
     hash = hashlib.blake2b(password.encode()).hexdigest()
@@ -119,11 +118,11 @@ async def login(email: str, password: str):
 
     return retuser
 
-@app.post("/get")
+@app.get("/get")
 async def get(token: str):
     return users[token]
 
-@app.post("/logout")
+@app.get("/logout")
 async def logout(token: str):
     del users[token]
     return []

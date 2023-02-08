@@ -2,7 +2,7 @@
 
 error_reporting(E_ERROR | E_PARSE);
 
-include_once("Microservice/Out.php");
+include_once("Out.php");
 
 include_once("Microservice/Service.php");
 include_once("Microservice/Auth.php");
@@ -10,6 +10,7 @@ include_once("Microservice/Bill.php");
 include_once("Microservice/Prediction.php");
 
 use Microservice\Service;
+use Out;
 
 $model  = Service::sanitize($_REQUEST["model"]);
 $method = Service::sanitize($_REQUEST["method"]);
