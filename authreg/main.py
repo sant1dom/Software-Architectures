@@ -23,7 +23,7 @@ app.add_middleware(
 )
 
 
-class User(BaseModel):
+class User():
     # auto generated, used as key
     userid: int
 
@@ -39,24 +39,24 @@ class User(BaseModel):
     surname: str
     phone: str
 
-
-admin = {
-    "userid": 0,
-    "role": "admin",
-    "email": "admin@energy.org",
-    "password": "bfcce2c19c8563fd4aa66f6ec607341ff25e5f6fe7fa520d7d1242d871385f23a3e8e80093120b4877d79535e10b182ae2ec8937d1f72f091e7178c9e4ff0f11",
-    "name": "Harley",
-    "surname": "Davidson",
-    "phone": "123456789",
-}
+class Session():
+    token: uuid.UUID
+    userid: int
 
 users = []
-users.append(User(**admin))
-
 sessions = []
 
+admin = User()
+admin.userid = 0,
+admin.role = "admin"
+admin.email = "admin@energy.org"
+admin.password = "bfcce2c19c8563fd4aa66f6ec607341ff25e5f6fe7fa520d7d1242d871385f23a3e8e80093120b4877d79535e10b182ae2ec8937d1f72f091e7178c9e4ff0f11"
+admin.name = "Harley"
+admin.surname = "Davidson"
+admin.phone = "123456789"
+users.append(admin)
 
-@app.post("/register")
+@app.get("/register")
 async def register(email: str, password: str, name: str, surname: str, phone: str):
 
     #Check Email
@@ -73,19 +73,25 @@ async def register(email: str, password: str, name: str, surname: str, phone: st
     user.surname = surname
     user.phone = phone
 
-    hash = hashlib.blake2b(user["password"].encode()).hexdigest()
+    #Hash Password
+    hash = hashlib.blake2b(password.encode()).hexdigest()
     user.password = hash
 
-    users[user.userid] = user
+    users.append(user)
 
-    #Create and store Session
-    token: uuid.UUID = uuid.uuid4()
-    sessions[token] = user.userid
+    #Generate Token
+    token = uuid.uuid4()
+
+    # Create and store Session
+    session = Session()
+    session.token = token
+    session.userid = user.userid
+    sessions.append(session)
 
     #Return a cleaned user with token
     retuser = deepcopy(user)
-    del retuser["password"]
-    retuser["token"] = token
+    retuser.password = "HASH"
+    retuser.token = token
 
     return retuser
 
@@ -107,22 +113,41 @@ async def login(email: str, password: str):
     if not found:
         return "Wrong Email"
 
-    #Create and store Session
-    token: uuid.UUID = uuid.uuid4()
-    sessions[token] = user.userid
+    #Generate Token
+    token = uuid.uuid4()
+
+    # Create and store Session
+    session = Session()
+    session.token = token
+    session.userid = user.userid
+    sessions.append(session)
 
     #Return a cleaned user with token
     retuser = deepcopy(user)
-    del retuser["password"]
-    retuser["token"] = token
+    retuser.password = "HASH"
+    retuser.token = token
 
     return retuser
 
 @app.get("/get")
 async def get(token: str):
-    return users[token]
+    for session in sessions:
+        if session.token == token:
+            user = users[session.userid]
+
+            # Return a cleaned user with token
+            retuser = deepcopy(user)
+            retuser.password = "HASH"
+            retuser.token = token
+
+            return retuser
+
+    return []
 
 @app.get("/logout")
 async def logout(token: str):
-    del users[token]
+    for k, session in enumerate(sessions):
+        if session.token == token:
+            del sessions[k]
+
     return []
