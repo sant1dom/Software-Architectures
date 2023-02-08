@@ -23,7 +23,7 @@ class Bill extends Service
 	    $fields = ["billid"];
 	    foreach ($fields as $field)
 		{
-		    $data[$field] = static::sanitize($_REQUEST[field]);
+		    $data[$field] = static::sanitize($_REQUEST[$field]);
 		}
 
 	    $auth   = Auth::get();
