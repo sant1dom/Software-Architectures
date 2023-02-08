@@ -160,3 +160,16 @@ services:
       - "8084:8084"
     depends_on:
       - api_gateway
+      -
+  prediction:
+    image: prediction
+    container_name: prediction
+    restart: always
+    build:
+      context: ./prediction
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
+    depends_on:
+      - authreg
+      - influxdb
