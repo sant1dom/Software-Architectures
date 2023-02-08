@@ -141,11 +141,13 @@ services:
     build:
       context: ./PHP/sa_api
       dockerfile: Dockerfile
-    command: 'php artisan serve --host=0.0.0.0 --port=8083'
-    volumes:
-        - ./PHP/sa_dash:/app
     ports:
-        - "8083:8083"
+      - "8083:8083"
+    depends_on:
+      - authreg
+      - bills
+      - nodered
+      - influxdb
 
   frontend:
     image: frontend
