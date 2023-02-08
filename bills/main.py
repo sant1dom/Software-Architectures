@@ -88,6 +88,9 @@ def getAll(userid: int):
 @app.get("/getId")
 def getId(userid: int, billid: int):
 
+    if not billid in bills:
+        return "Bill not found"
+
     bill = bills[billid]
 
     if bill.userid == userid:

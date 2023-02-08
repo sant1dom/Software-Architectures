@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../Out.php';
+#require_once __DIR__ . '/../Out.php';
 namespace Microservice;
 use Out;
 
@@ -25,17 +25,28 @@ class Service
 		return $string;
 	}
 
-	static function send($url, $data, $method)
+	static function send($url, $data, $method = "get", $json = false)
     {
-        $options = [
-            "http" => [
-                "header"  => "Content-type: application/json",
-                "method"  => $method,
-                "content" => json_encode($data),
-            ],
-        ];
-        $context  = stream_context_create($options);
-        $raw_response = file_get_contents($url, false, $context);
+		if ($json)
+		{
+			$options      = [
+				"http" => [
+					"header"  => "Content-type: application/json",
+					"method"  => $method,
+					"content" => json_encode($data),
+				],
+			];
+			$context      = stream_context_create($options);
+			$raw_response = file_get_contents($url, false, $context);
+		}
+		else
+		{
+			foreach($data as $key => $value)
+			{
+				$url .= $key . '=' . $value . '&';
+			}
+			$raw_response = file_get_contents($url);
+		}
 
 		$results = json_decode($raw_response);
 		if (!is_object($results))

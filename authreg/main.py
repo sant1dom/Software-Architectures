@@ -142,7 +142,7 @@ async def get(token: str):
 
             return retuser
 
-    return []
+    return "Invalid token"
 
 @app.get("/logout")
 async def logout(token: str):
