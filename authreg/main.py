@@ -8,7 +8,6 @@ import hashlib
 
 app = FastAPI()
 
-
 origins = [
     "http://localhost",
     "http://localhost:8080",
@@ -25,56 +24,105 @@ app.add_middleware(
 
 
 class User(BaseModel):
-    username: str
+    # auto generated, used as key
+    userid: uuid.UUID = uuid.uuid4()
+
+    # auto generated
+    role: str = "user"
+
+    # from registration, used for login
+    email: str
     password: str
+
+    # from registration, not used for login
     name: str
     surname: str
-    email: str
     phone: str
-    role: str = "user"
-    id: uuid.UUID = uuid.uuid4()
 
 
 class RegisterUser(BaseModel):
-    username: str
+    email: str
     password: str
     name: str
     surname: str
-    email: str
     phone: str
 
 
-users = {
-    "admin": {
-        "username": "admin",
-        "password": "bfcce2c19c8563fd4aa66f6ec607341ff25e5f6fe7fa520d7d1242d871385f23a3e8e80093120b4877d79535e10b182ae2ec8937d1f72f091e7178c9e4ff0f11",
-        "name": "Harley",
-        "surname": "Davidson",
-        "email": "admin@energy.org",
-        "phone": "123456789",
-        "role": "admin",
-        "id": uuid.uuid4()
-    }
+admin = {
+    "userid": uuid.uuid4(),
+    "role": "admin",
+    "email": "admin@energy.org",
+    "password": "bfcce2c19c8563fd4aa66f6ec607341ff25e5f6fe7fa520d7d1242d871385f23a3e8e80093120b4877d79535e10b182ae2ec8937d1f72f091e7178c9e4ff0f11",
+    "name": "Harley",
+    "surname": "Davidson",
+    "phone": "123456789",
 }
+
+users = []
+users[admin.id] = User(admin)
+
+sessions = []
 
 
 @app.post("/register")
-async def register(user: RegisterUser):
-    user = User(**user.dict())
-    if user.username in users:
-        raise HTTPException(status_code=400, detail="Username already exists")
-    user["password"] = hashlib.blake2b(user["password"].encode()).hexdigest()
-    users[user.username] = user
+async def register(reg_user: RegisterUser):
+
+    #Check Email
+    for user in users:
+        if user.email == reg_user.email:
+            return "Email already exists"
+
+    #Create and store User
+    user = User(**reg_user.dict())
+    hash = hashlib.blake2b(user["password"].encode()).hexdigest()
+    user["password"] = hash
+    users[user.id] = user
+
+    #Create and store Session
+    token: uuid.UUID = uuid.uuid4()
+    sessions[token] = user.userid
+
+    #Return a cleaned user with token
     retuser = deepcopy(user)
-    retuser["password"] = ""
-    return {"message": "Registration successful", "user": retuser}
+    del retuser["password"]
+    retuser["token"] = token
+
+    return retuser
 
 
 @app.post("/login")
-async def login(username: str, password: str):
-    if username not in users or not compare_digest(users[username]["password"], hashlib.blake2b(password.encode()).hexdigest()):
-        raise HTTPException(status_code=401, detail="Invalid username or password")
-    retuser = deepcopy(users[username])
-    print(retuser)
-    retuser["password"] = ""
-    return {"message": "Login successful", "user": retuser}
+async def login(email: str, password: str):
+
+    hash = hashlib.blake2b(password.encode()).hexdigest()
+
+    found = False
+    for user in users:
+        if user.email == email:
+            if user.password != hash:
+                return "Wrong Password"
+            else:
+                found = True
+                break
+
+    if not found:
+        return "Wrong Email"
+
+    #Create and store Session
+    token: uuid.UUID = uuid.uuid4()
+    sessions[token] = user.userid
+
+    #Return a cleaned user with token
+    retuser = deepcopy(user)
+    del retuser["password"]
+    retuser["token"] = token
+
+    return retuser
+
+@app.post("/get")
+async def get(token: str):
+    return users[token]
+
+@app.post("/logout")
+async def logout(token: str):
+    del users[token]
+    return []
