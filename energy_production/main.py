@@ -8,7 +8,7 @@ import uuid
 
 
 def add_house(lat, lon, tilt, orientation, altitude, area, number, efficiency):
-    flows = requests.get("http://nodered:1880/flows").json()
+    flows = requests.get("http://nodered:8880/flows").json()
     y = flows[-1]["y"] + 200
     id = uuid.uuid4()
 
@@ -33,7 +33,7 @@ def add_house(lat, lon, tilt, orientation, altitude, area, number, efficiency):
     flows["flows"].append(solar_panel)
 
     flows[2]["wires"].append([solar_panel["id"]])
-    requests.post("http://nodered:1880/flows", json=flows)
+    requests.post("http://nodered:8880/flows", json=flows)
 
 
 if __name__ == "__main__":

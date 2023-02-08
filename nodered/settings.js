@@ -161,7 +161,7 @@ module.exports = {
      */
     //httpServerOptions: { },
 
-    /** By default, the Node-RED UI is available at http://localhost:1880/
+    /** By default, the Node-RED UI is available at http://localhost:8880/
      * The following property can be used to specify a different root path.
      * If set to false, this is disabled.
      */
@@ -218,7 +218,7 @@ module.exports = {
 
     /** When httpAdminRoot is used to move the UI to a different root path, the
      * following property can be used to identify a directory of static content
-     * that should be served at http://localhost:1880/.
+     * that should be served at http://localhost:8880/.
      * When httpStaticRoot is set differently to httpAdminRoot, there is no need 
      * to move httpAdminRoot
      */
@@ -258,7 +258,7 @@ module.exports = {
 
     /** Configure diagnostics options 
      * - enabled:  When `enabled` is `true` (or unset), diagnostics data will
-     *   be available at http://localhost:1880/diagnostics  
+     *   be available at http://localhost:8880/diagnostics  
      * - ui: When `ui` is `true` (or unset), the action `show-system-info` will 
      *   be available to logged in users of node-red editor  
     */
@@ -270,7 +270,7 @@ module.exports = {
     },
     /** Configure runtimeState options 
      * - enabled:  When `enabled` is `true` flows runtime can be Started/Stoped 
-     *   by POSTing to available at http://localhost:1880/flows/state  
+     *   by POSTing to available at http://localhost:8880/flows/state  
      * - ui: When `ui` is `true`, the action `core:start-flows` and 
      *   `core:stop-flows` will be available to logged in users of node-red editor
      *   Also, the deploy menu (when set to default) will show a stop or start button
