@@ -24,6 +24,7 @@ $valids = [
 	"Bill"       => [
 		"getAll",
 		"getId",
+		"makeRandom",
 	],
 	"Prediction" => [
 		"getConsumption",

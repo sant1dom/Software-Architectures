@@ -736,5 +736,134 @@
                 "file": "/data/node_modules/node-red-dashboard/nodes/ui_spacer.js"
             }
         }
+    },
+    "node-red-contrib-power-saver": {
+        "name": "node-red-contrib-power-saver",
+        "version": "4.1.3",
+        "local": false,
+        "user": false,
+        "nodes": {
+            "ps-receive-price": {
+                "name": "ps-receive-price",
+                "types": [
+                    "ps-receive-price"
+                ],
+                "enabled": true,
+                "local": false,
+                "user": false,
+                "module": "node-red-contrib-power-saver",
+                "file": "/usr/src/node-red/node_modules/node-red-contrib-power-saver/src/receive-price.js"
+            },
+            "ps-strategy-best-save": {
+                "name": "ps-strategy-best-save",
+                "types": [
+                    "ps-strategy-best-save"
+                ],
+                "enabled": true,
+                "local": false,
+                "user": false,
+                "module": "node-red-contrib-power-saver",
+                "file": "/usr/src/node-red/node_modules/node-red-contrib-power-saver/src/strategy-best-save.js"
+            },
+            "ps-strategy-lowest-price": {
+                "name": "ps-strategy-lowest-price",
+                "types": [
+                    "ps-strategy-lowest-price"
+                ],
+                "enabled": true,
+                "local": false,
+                "user": false,
+                "module": "node-red-contrib-power-saver",
+                "file": "/usr/src/node-red/node_modules/node-red-contrib-power-saver/src/strategy-lowest-price.js"
+            },
+            "ps-strategy-heat-capacitor": {
+                "name": "ps-strategy-heat-capacitor",
+                "types": [
+                    "ps-strategy-heat-capacitor"
+                ],
+                "enabled": true,
+                "local": false,
+                "user": false,
+                "module": "node-red-contrib-power-saver",
+                "file": "/usr/src/node-red/node_modules/node-red-contrib-power-saver/src/strategy-heat-capacitor.js"
+            },
+            "ps-strategy-fixed-schedule": {
+                "name": "ps-strategy-fixed-schedule",
+                "types": [
+                    "ps-strategy-fixed-schedule"
+                ],
+                "enabled": true,
+                "local": false,
+                "user": false,
+                "module": "node-red-contrib-power-saver",
+                "file": "/usr/src/node-red/node_modules/node-red-contrib-power-saver/src/strategy-fixed-schedule.js"
+            },
+            "ps-schedule-merger": {
+                "name": "ps-schedule-merger",
+                "types": [
+                    "ps-schedule-merger"
+                ],
+                "enabled": true,
+                "local": false,
+                "user": false,
+                "module": "node-red-contrib-power-saver",
+                "file": "/usr/src/node-red/node_modules/node-red-contrib-power-saver/src/schedule-merger.js"
+            },
+            "ps-elvia-config": {
+                "name": "ps-elvia-config",
+                "types": [
+                    "ps-elvia-config"
+                ],
+                "enabled": true,
+                "local": false,
+                "user": false,
+                "module": "node-red-contrib-power-saver",
+                "file": "/usr/src/node-red/node_modules/node-red-contrib-power-saver/src/elvia/elvia-config.js"
+            },
+            "ps-elvia-tariff-types": {
+                "name": "ps-elvia-tariff-types",
+                "types": [
+                    "ps-elvia-tariff-types"
+                ],
+                "enabled": true,
+                "local": false,
+                "user": false,
+                "module": "node-red-contrib-power-saver",
+                "file": "/usr/src/node-red/node_modules/node-red-contrib-power-saver/src/elvia/elvia-tariff-types.js"
+            },
+            "ps-elvia-tariff": {
+                "name": "ps-elvia-tariff",
+                "types": [
+                    "ps-elvia-tariff"
+                ],
+                "enabled": true,
+                "local": false,
+                "user": false,
+                "module": "node-red-contrib-power-saver",
+                "file": "/usr/src/node-red/node_modules/node-red-contrib-power-saver/src/elvia/elvia-tariff.js"
+            },
+            "ps-elvia-add-tariff": {
+                "name": "ps-elvia-add-tariff",
+                "types": [
+                    "ps-elvia-add-tariff"
+                ],
+                "enabled": true,
+                "local": false,
+                "user": false,
+                "module": "node-red-contrib-power-saver",
+                "file": "/usr/src/node-red/node_modules/node-red-contrib-power-saver/src/elvia/elvia-add-tariff.js"
+            },
+            "ps-general-add-tariff": {
+                "name": "ps-general-add-tariff",
+                "types": [
+                    "ps-general-add-tariff"
+                ],
+                "enabled": true,
+                "local": false,
+                "user": false,
+                "module": "node-red-contrib-power-saver",
+                "file": "/usr/src/node-red/node_modules/node-red-contrib-power-saver/src/general-add-tariff.js"
+            }
+        }
     }
 }

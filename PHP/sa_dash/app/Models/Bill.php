@@ -17,13 +17,13 @@ class Bill extends Model
 		return $bills;
 	}
 
-	public static function getId($token, $id)
+	public static function getId($token, $billid)
 	{
 		$request = [
 			"model"  => str_replace("App\\Models\\", "", get_class()),
 			"method" => __FUNCTION__,
 			"token"  => $token,
-			"id"     => $id,
+			"billid"     => $billid,
 		];
 
 		$bill = static::sendRequest($request);

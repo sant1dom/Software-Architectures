@@ -164,3 +164,17 @@ services:
       - api_gateway
     volumes:
       - ./PHP/sa_dash:/var/www/html
+
+  prediction:
+    image: prediction
+    container_name: prediction
+    restart: always
+    build:
+      context: ./prediction
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
+    depends_on:
+      - authreg
+      - influxdb
+

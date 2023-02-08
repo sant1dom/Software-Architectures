@@ -27,8 +27,8 @@ app.add_middleware(
 
 
 class Bill(BaseModel):
-    id: uuid.UUID = uuid.uuid4()
-    house_id: int
+    billid: uuid.UUID = uuid.uuid4()
+    userid: int
     energy_production: float
     energy_consumption: float
     date: str
@@ -36,12 +36,11 @@ class Bill(BaseModel):
     paid: bool = False
     address: str = fake.address()
 
+bills = []
 
-@app.get("/bills")
-def get_bills():
-    bills = []
+@app.get("/makeRandom")
+def makeRandom(userid):
     address = fake.address()
-    house_id = random.randint(140, 150)
     dates = [
         "Jan 2022",
         "Feb 2022",
@@ -56,15 +55,44 @@ def get_bills():
         "Nov 2022",
         "Dec 2022"
     ]
+
+    mybills = []
+
     for i in range(12):
-        bills.append(Bill(
-            house_id=house_id,
+        bill = Bill(
+            userid=userid,
             energy_production=random.uniform(250, 350),
             energy_consumption=random.uniform(250, 350),
             date=dates[i],
             total=0,
             address=address,
             paid=random.choice([True, False])
-        ))
-        bills[-1].total = (bills[-1].energy_consumption - bills[-1].energy_production) * 0.361
+        )
+
+        bills[bill.billid] = bill
+        mybills[bill.billid] = bill
+
+    return mybills
+
+@app.get("/getAll")
+def getAll(userid: str):
+
+    mybills = []
+    for bill in bills:
+        if bill.userid == userid:
+            mybills.append(bill)
+
+    if not len(bills):
+        return makeRandom(userid)
+
     return bills
+
+@app.get("/getId")
+def getId(userid: str, billid: str):
+
+    bill = bills[billid]
+
+    if bill.userid == userid:
+        return bill
+    else:
+        return []

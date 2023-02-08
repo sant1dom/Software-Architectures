@@ -24,14 +24,8 @@ class Service
 		return $string;
 	}
 
-	static function send($url, $fields)
+	static function send($url, $data)
     {
-		$data = [];
-		foreach($fields as $field)
-		{
-		    $data[$field] = static::sanitize($_REQUEST[$field]);
-		}
-
         $options = [
             "http" => [
                 "header"  => "Content-type: application/json",
