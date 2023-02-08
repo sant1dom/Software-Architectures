@@ -20,14 +20,13 @@ class Auth extends Model
 		return static::$current;
 	}
 
-	public static function register($email, $password, $username, $name, $surname, $phone)
+	public static function register($email, $password, $name, $surname, $phone)
 	{
 		$request = [
 			"model"    => str_replace("App\\Models\\", "", get_class()),
 			"method"   => __FUNCTION__,
 			"email"    => $email,
 			"password" => $password,
-			"username" => $username,
 			"name"     => $name,
 			"surname"  => $surname,
 			"phone"    => $phone,

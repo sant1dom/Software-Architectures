@@ -35,16 +35,6 @@
 			<x-form.error :messages="$errors->get('password_confirmation')" class="mt-2"/>
 		</div>
 
-		<!-- Username -->
-		<div class="mt-4">
-			<x-form.label for="username" value="Username"/>
-
-			<x-form.text id="username" class="block mt-1 w-full" type="text" name="username" :value="old('username')"
-			              required autofocus/>
-
-			<x-form.error :messages="$errors->get('username')" class="mt-2"/>
-		</div>		
-		
 		<!-- Name -->
 		<div class="mt-4">
 			<x-form.label for="name" value="Name"/>
@@ -74,8 +64,8 @@
 			              required autofocus/>
 
 			<x-form.error :messages="$errors->get('phone')" class="mt-2"/>
-		</div>		
-		
+		</div>
+
 		<div class="flex items-center mt-4">
 			<x-other.button>
 				Register
@@ -88,5 +78,5 @@
 	   class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 	   href="{{ route('auth.login') }}">
 		Or Login
-	</a>	
+	</a>
 </x-guest-layout>
