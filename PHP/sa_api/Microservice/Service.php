@@ -38,7 +38,7 @@ class Service
         $raw_response = file_get_contents($url, false, $context);
 
 		$results = json_decode($raw_response);
-		if (!is_object($auth))
+		if (!is_object($results))
 		{
 			Out::send("ERROR", $raw_response);
 		}

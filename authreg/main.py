@@ -25,7 +25,7 @@ app.add_middleware(
 
 class User(BaseModel):
     # auto generated, used as key
-    userid: uuid.UUID = uuid.uuid4()
+    userid: int
 
     # auto generated
     role: str = "user"
@@ -47,9 +47,8 @@ class RegisterUser(BaseModel):
     surname: str
     phone: str
 
-
 admin = {
-    "userid": uuid.uuid4(),
+    "userid": 1,
     "role": "admin",
     "email": "admin@energy.org",
     "password": "bfcce2c19c8563fd4aa66f6ec607341ff25e5f6fe7fa520d7d1242d871385f23a3e8e80093120b4877d79535e10b182ae2ec8937d1f72f091e7178c9e4ff0f11",
@@ -59,7 +58,7 @@ admin = {
 }
 
 users = []
-users[admin.id] = User(admin)
+users.append(User(**admin))
 
 sessions = []
 
@@ -75,8 +74,10 @@ async def register(reg_user: RegisterUser):
     #Create and store User
     user = User(**reg_user.dict())
     hash = hashlib.blake2b(user["password"].encode()).hexdigest()
-    user["password"] = hash
-    users[user.id] = user
+    user.password = hash
+    user.userid = len(users) + 1
+
+    users[user.userid] = user
 
     #Create and store Session
     token: uuid.UUID = uuid.uuid4()
