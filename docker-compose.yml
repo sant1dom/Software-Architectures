@@ -78,7 +78,7 @@ services:
       context: ./nodered
       dockerfile: Dockerfile
     ports:
-      - "1880:1880"
+      - "8880:8880"
     volumes:
       - ./nodered:/data
       #- ./settings.js:/data/settings.js
