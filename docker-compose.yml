@@ -130,9 +130,17 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8082:8082"
-    depends_on:
-      - authreg
-      - influxdb
+
+  prediction:
+    image: prediction
+    container_name: prediction
+    restart: always
+    build:
+      context: ./prediction
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
+
 
   api_gateway:
     image: api_gateway
@@ -146,8 +154,7 @@ services:
     depends_on:
       - authreg
       - bills
-      - nodered
-      - influxdb
+      - prediction
     volumes:
       - ./PHP/sa_api:/var/www/html
 
@@ -164,17 +171,4 @@ services:
       - api_gateway
     volumes:
       - ./PHP/sa_dash:/var/www/html
-
-  prediction:
-    image: prediction
-    container_name: prediction
-    restart: always
-    build:
-      context: ./prediction
-      dockerfile: Dockerfile
-    ports:
-      - "8085:8085"
-    depends_on:
-      - authreg
-      - influxdb
 
