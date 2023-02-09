@@ -5,6 +5,11 @@ use Out;
 
 class Service
 {
+	public static function isDebug()
+	{
+		return (isset($_GET["debug"]) && $_GET["debug"]== "debug");
+	}
+
 	static function sanitize($string)
 	{
 		$string = str_replace("'",          "\\’",        $string);
@@ -48,12 +53,20 @@ class Service
 			$raw_response = file_get_contents($url);
 		}
 
-		$results = json_decode($raw_response);
-		if (!is_object($results))
+	    $response = json_decode($raw_response);
+
+	    if (static::isDebug())
+	    {
+		    var_dump($url);
+		    var_dump($raw_response);
+		    var_dump($response);
+	    }
+
+		if (!is_object($response) && !is_array($response))
 		{
 			Out::send("ERROR", $raw_response);
 		}
 
-		return $results;
+		return $response;
     }
 }

@@ -11,9 +11,9 @@ class Prediction extends Service
 	    $data = [];
 
 	    $auth   = Auth::get();
-		$data["userid"] = $$auth["userid"];
+		$data["userid"] = $auth->userid;
 
-		$url = "http://prediction:8085/getConsumption";
+		$url = "http://prediction:8085/getConsumption?";
 
 		return static::send($url, $data);
 	}
@@ -23,9 +23,9 @@ class Prediction extends Service
 	    $data = [];
 
 	    $auth   = Auth::get();
-		$data["userid"] = $$auth["userid"];
+		$data["userid"] = $auth->userid;
 
-		$url = "http://prediction:8085/getProduction";
+		$url = "http://prediction:8085/getProduction?";
 
 		return static::send($url, $data);
 	}
@@ -35,9 +35,9 @@ class Prediction extends Service
 	    $data = [];
 
 	    $auth   = Auth::get();
-		$data["userid"] = $$auth["userid"];
+		$data["userid"] = $auth->userid;
 
-		$url = "http://prediction:8085/getFuture";
+		$url = "http://prediction:8085/getFuture?";
 
 		return static::send($url, $data);
 	}

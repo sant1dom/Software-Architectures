@@ -13,7 +13,7 @@
 			<tr>
 				<x-table.th>Id</x-table.th>
 				<x-table.td>
-					{{ $bill->id }}
+					{{ $bill->billid }}
 				</x-table.td>
 			</tr>
 			<tr>
@@ -23,9 +23,9 @@
 				</x-table.td>
 			</tr>
 			<tr>
-				<x-table.th>House id</x-table.th>
+				<x-table.th>User id</x-table.th>
 				<x-table.td>
-					{{ $bill->house_id }}
+					{{ $bill->userid }}
 				</x-table.td>
 			</tr>
 			<tr>

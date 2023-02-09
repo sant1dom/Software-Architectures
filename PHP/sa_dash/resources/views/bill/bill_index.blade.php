@@ -18,13 +18,13 @@
 				<tr>
 					<x-table.td>
 						<a style="text-decoration: underline; color: blue"
-						   href="{{ route("bill.show") }}?id={{ $bill->id }}">
-							{{ $bill->id }}
+						   href="{{ route("bill.show") }}?id={{ $bill->billid }}">
+							{{ $bill->billid }}
 						</a>
 					</x-table.td>
 					<x-table.td>
 						<a style="text-decoration: underline; color: blue"
-						   href="{{ route("bill.show") }}?id={{ $bill->id }}">
+						   href="{{ route("bill.show") }}?id={{ $bill->billid }}">
 							{{ $bill->date }}
 						</a>
 					</x-table.td>

@@ -20,12 +20,25 @@ app.add_middleware(
 
 @app.get("/getConsumption")
 def getConsumption(userid):
-    return {"Consumption": random.uniform(1, 100)}
+    return {
+        "name": "Consumption",
+        "info1": random.uniform(1, 100),
+        "info2": random.uniform(1, 100),
+    }
 
 @app.get("/getProduction")
 def getProduction(userid):
-    return {"Production": random.uniform(101, 200)}
+    return {
+        "name": "Production",
+        "info1": random.uniform(1, 100),
+        "info2": random.uniform(1, 100),
+    }
+
 
 @app.get("/getFuture")
 def getFuture(userid):
-    return {"Future": random.uniform(201, 300)}
+    return {
+        "name": "Future",
+        "info1": random.uniform(1, 100),
+        "info2": random.uniform(1, 100),
+    }

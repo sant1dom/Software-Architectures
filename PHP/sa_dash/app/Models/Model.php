@@ -30,7 +30,7 @@ class Model extends BaseModel
 			dump($response);
 		}
 
-		if (!is_object($response))
+		if (!is_object($response) && !is_array($response))
 		{
 			if (is_string($raw_response))
 			{
