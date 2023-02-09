@@ -8,7 +8,7 @@ class Model extends BaseModel
 {
 	public static function sendRequest($request)
 	{
-		$url = "http://api_gateway/index.php?";
+		$url = "http://localhost:8083/index.php?";
 
 		foreach ($request as $k => $v)
 		{
@@ -21,7 +21,7 @@ class Model extends BaseModel
 
 		if (!is_object($response))
 		{
-			throw new ExceptionError($raw_response);
+			throw new ExceptionError("" . $raw_response);
 		}
 
 		if ($response->code == "UNLOGGED")
