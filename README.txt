@@ -12,6 +12,6 @@ Setup:
 9) Go on "http://localhost:8085/" for the Micro Service "Prediction"
 10) Go on "http://localhost:8880/" for Node-RED
 11) Go on "http://localhost:8080/" for Apache Kafka
-12) Go on "http://localhost:8086" for Influx DB (Credentials: admin/adminpass)
-13) Go on "http://localhost:9093" for Broker
-14) Go on "http://localhost:3000" for Grafana
+12) Go on "http://localhost:8086/" for Influx DB (Credentials: admin/adminpass)
+13) Go on "http://localhost:9093/" for Broker
+14) Go on "http://localhost:3000/" for Grafana
