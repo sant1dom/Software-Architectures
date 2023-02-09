@@ -8,7 +8,7 @@ class Model extends BaseModel
 {
 	public static function sendRequest($request)
 	{
-		$url = "http://localhost:8083/index.php?";
+		$url = "http://api_gateway:8083/index.php?";
 
 		foreach ($request as $k => $v)
 		{

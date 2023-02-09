@@ -12,7 +12,7 @@ class Bill extends Service
 		$data["userid"] = $auth["userid"];
 
 		$url = "http://bills:8082/getAll";
-	    $fields = ["userid"];
+
 		return static::send($url, $data);
 	}
 
@@ -29,7 +29,7 @@ class Bill extends Service
 		$data["userid"] = $auth["userid"];
 
 		$url = "http://bills:8082/getId";
-	    $fields = ["userid"];
+
 		return static::send($url, $data);
 	}
 
@@ -41,7 +41,7 @@ class Bill extends Service
 		$data["userid"] = $auth["userid"];
 
 		$url = "http://bills:8082/makeRandom";
-	    $fields = ["userid"];
+
 		return static::send($url, $data);
 	}
 }
