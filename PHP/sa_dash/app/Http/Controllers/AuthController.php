@@ -60,7 +60,8 @@ class AuthController extends Controller
 		}
 		catch(ExceptionError $e)
 		{
-			abort(500, $e->getMessage());
+			//abort(500, $e->getMessage());
+			return static::backError($fields, $e->getMessage());
 		}
 	}
 
@@ -115,7 +116,8 @@ class AuthController extends Controller
 		}
 		catch(ExceptionError $e)
 		{
-			abort(500, $e->getMessage());
+			//abort(500, $e->getMessage());
+			return static::backError($fields, $e->getMessage());
 		}
 	}
 
@@ -137,6 +139,28 @@ class AuthController extends Controller
 		}
 
 		return redirect(route("auth.login"));
+	}
+
+	public static function backError($fields, $msg)
+	{
+		$errors = [];
+		if (stripos($msg, "email") !== false)
+		{
+			$errors['email'] = $msg;
+		}
+		if (stripos($msg, "password") !== false)
+		{
+			$errors['password'] = $msg;
+		}
+		if (!count($errors))
+		{
+			$errors = [
+				'email' => $msg,
+				'password' => $msg,
+			];
+		}
+
+		return back()->withInput($fields)->withErrors($errors);
 	}
 
 }
