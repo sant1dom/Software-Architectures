@@ -132,7 +132,7 @@ async def login(email: str, password: str):
 @app.get("/get")
 async def get(token: str):
     for session in sessions:
-        if session.token == token:
+        if str(session.token) == str(token):
             user = users[session.userid]
 
             # Return a cleaned user with token
