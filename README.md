@@ -1,7 +1,7 @@
 Setup:
 
 1) Clone the project from GitHub
-2) Create a new Python Project in the Project Dir
+2) Type ```docker compose build``` in terminal and wait for the image building
 3) Type ```docker compose up``` in terminal
 4) Go on "http://localhost:8080/" for Kafka UI 
 5) Go on "http://localhost:8081/" for the Micro Service "AuthReg" (nothing shows directly, to see the OpenAPI docs go on "http://localhost:8081/docs")
