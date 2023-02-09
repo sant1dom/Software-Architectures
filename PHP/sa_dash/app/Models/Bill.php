@@ -23,7 +23,7 @@ class Bill extends Model
 			"model"  => str_replace("App\\Models\\", "", get_class()),
 			"method" => __FUNCTION__,
 			"token"  => $token,
-			"billid"     => $billid,
+			"billid" => $billid,
 		];
 
 		$bill = static::sendRequest($request);

@@ -9,7 +9,7 @@ class Bill extends Service
 	    $data = [];
 
 	    $auth   = Auth::get();
-		$data["userid"] = $auth["userid"];
+		$data["userid"] = $auth->userid;
 
 		$url = "http://bills:8082/getAll";
 
@@ -26,7 +26,7 @@ class Bill extends Service
 		}
 
 	    $auth   = Auth::get();
-		$data["userid"] = $auth["userid"];
+		$data["userid"] = $auth->userid;
 
 		$url = "http://bills:8082/getId";
 
@@ -38,7 +38,7 @@ class Bill extends Service
 	    $data = [];
 
 	    $auth   = Auth::get();
-		$data["userid"] = $auth["userid"];
+		$data["userid"] = $auth->userid;
 
 		$url = "http://bills:8082/makeRandom";
 

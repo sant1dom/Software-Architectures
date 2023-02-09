@@ -18,10 +18,21 @@ class Model extends BaseModel
 		$raw_response = file_get_contents($url);
 
 		$response = json_decode($raw_response);
+		if (isset($_GET["debug"]) && $_GET["debug"]== "debug")
+		{
+			dump($raw_response);
+			dump($response);
+			die();
+		}
 
 		if (!is_object($response))
 		{
-			throw new ExceptionError("" . $raw_response);
+			if (is_string($raw_response))
+			{
+				throw new ExceptionError($raw_response);
+			}
+
+			throw new ExceptionError("Connection with API error");
 		}
 
 		if ($response->code == "UNLOGGED")
