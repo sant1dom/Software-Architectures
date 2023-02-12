@@ -29,6 +29,12 @@
 				</x-table.td>
 			</tr>
 			<tr>
+				<x-table.th>House id</x-table.th>
+				<x-table.td>
+					{{ $bill->houseid }}
+				</x-table.td>
+			</tr>
+			<tr>
 				<x-table.th>energy_production</x-table.th>
 				<x-table.td>
 					{{ $bill->energy_production }}
