@@ -1,12 +1,8 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from secrets import compare_digest
-from copy import deepcopy
-import uuid
-import hashlib
 from faker import Faker
 import random
+import sqlite3
 
 fake = Faker('it_IT')
 app = FastAPI()
@@ -25,22 +21,43 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def row_to_bill(array):
+    return {
+        "billid": array[0],
+        "houseid": array[1],
+        "userid": array[2],
+        "energy_production": array[3],
+        "energy_consumption": array[4],
+        "date": array[5],
+        "total": array[6],
+        "paid": array[7],
+        "address": array[8],
+    }
 
-class Bill(BaseModel):
-    billid: int
-    userid: int
-    energy_production: float
-    energy_consumption: float
-    date: str
-    total: float
-    paid: bool = False
-    address: str = fake.address()
+db = sqlite3.connect("bills.db")
 
-bills = []
+def init_db():
+    #1) Users
+    query = "CREATE TABLE IF NOT EXISTS bills(" \
+            "billid INTEGER PRIMARY KEY, " \
+            "houseid, " \
+            "userid, " \
+            "energy_production, " \
+            "energy_consumption, " \
+            "date, " \
+            "total, "\
+            "paid, " \
+            "address )"
+    print(query)
+    db.execute(query)
 
-@app.get("/makeRandom")
-def makeRandom(userid: int):
-    address = fake.address()
+    query = f"SELECT userid FROM bills LIMIT 1"
+    print(query)
+    response = db.execute(query)
+    bills = response.fetchall()
+    if len(bills):
+        return
+
     dates = [
         "Jan 2022",
         "Feb 2022",
@@ -56,44 +73,51 @@ def makeRandom(userid: int):
         "Dec 2022"
     ]
 
-    mybills = []
+    for userid in range(1, 10):
+        for houseid in range(140, 145):
+            address = fake.address()
+            for i in range(12):
+                date = dates[i]
+                energy_production = random.uniform(250, 350)
+                energy_consumption = random.uniform(250, 350)
+                total = random.uniform(100, 400)
+                paid = random.choice([True, False])
 
-    for i in range(12):
-        bill = Bill(
-            billid=len(bills),
-            userid=userid,
-            energy_production=random.uniform(250, 350),
-            energy_consumption=random.uniform(250, 350),
-            date=dates[i],
-            total=0,
-            address=address,
-            paid=random.choice([True, False])
-        )
+                query = f"INSERT INTO bills(houseid, userid, energy_production, energy_consumption, date, total, address, paid) VALUES(" \
+                        f"'{houseid}'," \
+                        f"'{userid}'," \
+                        f"'{energy_production}',"\
+                        f"'{energy_consumption}'," \
+                        f"'{date}'," \
+                        f"'{total}'," \
+                        f"'{address}'," \
+                        f"'{paid})"
+                print(query)
+                db.execute(query)
 
-        bills.append(bill)
-        mybills.append(bill)
-
-    return mybills
+init_db()
 
 @app.get("/getAll")
 def getAll(userid: int):
+    query = f"SELECT * FROM bills where userid = '{userid}'"
+    print(query)
+    response = db.execute(query)
+    rows = response.fetchall()
 
-    mybills = []
-    for bill in bills:
-        if bill.userid == userid:
-            mybills.append(bill)
-
+    bills = []
+    for row in rows:
+        bills.append(row_to_bill(row))
     return bills
+
 
 @app.get("/getId")
 def getId(userid: int, billid: int):
+    query = f"SELECT * FROM bills where userid = '{userid} and billid = '{billid}' LIMIT 1"
+    print(query)
+    response = db.execute(query)
+    rows = response.fetchall()
 
-    if not billid in bills:
-        return "Bill not found"
+    for row in rows:
+        return row_to_bill(row)
 
-    bill = bills[billid]
-
-    if bill.userid == userid:
-        return bill
-    else:
-        return []
+    return []

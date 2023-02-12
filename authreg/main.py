@@ -20,6 +20,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def row_to_user(array):
+    return {
+        "userid": array[0],
+        "role": array[1],
+        "email": array[2],
+        "password": array[3],
+        "name": array[4],
+        "surname": array[5],
+        "phone": array[6],
+    }
+
 db = sqlite3.connect("authreg.db")
 
 def init_db():
@@ -49,7 +60,7 @@ def init_db():
         return
 
     #4) Admin Store
-    query = f"INSERT INTO users('role', 'email', 'password', 'name', 'surname', 'phone') VALUES(" \
+    query = f"INSERT INTO users(role, email, password, name, surname, phone) VALUES(" \
             f"'admin'," \
             f"'admin@energy.org'," \
             f"'bfcce2c19c8563fd4aa66f6ec607341ff25e5f6fe7fa520d7d1242d871385f23a3e8e80093120b4877d79535e10b182ae2ec8937d1f72f091e7178c9e4ff0f11'," \
@@ -60,23 +71,6 @@ def init_db():
     db.execute(query)
 
 init_db()
-
-def row_to_user(array):
-    return {
-        'userid': array[0],
-        'role': array[1],
-        'email': array[2],
-        'password': array[3],
-        'name': array[4],
-        'surname': array[5],
-        'phone': array[6],
-    }
-
-def row_to_session(array):
-    return {
-        'token': array[0],
-        'userid': array[1],
-    }
 
 @app.get("/register")
 async def register(email: str, password: str, name: str, surname: str, phone: str):
@@ -90,7 +84,7 @@ async def register(email: str, password: str, name: str, surname: str, phone: st
 
     #2) Store
     hash = hashlib.blake2b(password.encode()).hexdigest()
-    query = f"INSERT INTO users('role', 'email', 'password', 'name', 'surname', 'phone') VALUES(" \
+    query = f"INSERT INTO users(role, email, password, name, surname, phone) VALUES(" \
             f"'user'," \
             f"'{email}'," \
             f"'{hash}'," \
@@ -162,7 +156,7 @@ async def get(token: str):
     sessions = response.fetchall()
     if len(sessions) == 0:
         return "Invalid token"
-    session = row_to_session(sessions[0])
+    session = sessions[0][0]
     print(session)
 
     # 2) Get User

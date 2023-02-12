@@ -32,16 +32,4 @@ class Bill extends Service
 
 		return static::send($url, $data);
 	}
-
-	static function makeRandom()
-	{
-	    $data = [];
-
-	    $auth   = Auth::get();
-		$data["userid"] = $auth->userid;
-
-		$url = "http://bills:8082/makeRandom?";
-
-		return static::send($url, $data);
-	}
 }
