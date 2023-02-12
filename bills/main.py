@@ -112,7 +112,7 @@ async def getAll(userid: int):
 
 @app.get("/getId")
 async def getId(userid: int, billid: int):
-    query = f"SELECT * FROM bills where userid = '{userid} and billid = '{billid}' LIMIT 1"
+    query = f"SELECT * FROM bills where userid = '{userid}' and billid = '{billid}' LIMIT 1"
     print(query)
     response = db.execute(query)
     rows = response.fetchall()
