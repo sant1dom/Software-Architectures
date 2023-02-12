@@ -6,11 +6,7 @@ import sqlite3
 
 app = FastAPI()
 
-origins = [
-    "http://localhost",
-    "http://localhost:8080",
-    "http://localhost:8081"
-]
+origins = ["http://localhost", "http://localhost:8080", "http://localhost:8081"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -19,6 +15,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 def row_to_user(array):
     return {
@@ -31,100 +28,96 @@ def row_to_user(array):
         "phone": array[6],
     }
 
+
 db = sqlite3.connect("authreg.db")
 
+
 def init_db():
-    #1) Users
-    query = "CREATE TABLE IF NOT EXISTS users(" \
-            "userid INTEGER PRIMARY KEY, " \
-            "role, " \
-            "email UNIQUE, " \
-            "password, " \
-            "name, " \
-            "surname, " \
-            "phone )"
+    # 1) Users
+    query = (
+        "CREATE TABLE IF NOT EXISTS users("
+        "userid INTEGER PRIMARY KEY, "
+        "role TEXT NOT NULL, "
+        "email TEXT NOT NULL UNIQUE, "
+        "password TEXT NOT NULL, "
+        "name TEXT NOT NULL, "
+        "surname TEXT NOT NULL, "
+        "phone TEXT NOT NULL )"
+    )
     print(query)
     db.execute(query)
 
-    #2) Sessions
-    query = "CREATE TABLE IF NOT EXISTS sessions(token, userid)"
+    # 2) Sessions
+    query = "CREATE TABLE IF NOT EXISTS sessions(token TEXT NOT NULL, userid INTEGER NOT NULL)"
     print(query)
     db.execute(query)
 
-    #3) Admin check
-    query = f"SELECT userid FROM users where email = 'admin@energy.org' LIMIT 1"
+    # 3) Admin check
+    query = "SELECT userid FROM users WHERE email = ? LIMIT 1"
     print(query)
-    response = db.execute(query)
+    response = db.execute(query, ("admin@energy.org",))
     users = response.fetchall()
     if len(users):
         return
 
-    #4) Admin Store
-    query = f"INSERT INTO users(role, email, password, name, surname, phone) VALUES(" \
-            f"'admin'," \
-            f"'admin@energy.org'," \
-            f"'bfcce2c19c8563fd4aa66f6ec607341ff25e5f6fe7fa520d7d1242d871385f23a3e8e80093120b4877d79535e10b182ae2ec8937d1f72f091e7178c9e4ff0f11'," \
-            f"'Harley'," \
-            f"'Davidson'," \
-            f"'123456789' )"
+    # 4) Admin Store
+    password = "passw0rd"
+    passhash = hashlib.blake2b(password.encode()).hexdigest()
+    query = (
+        "INSERT INTO users(role, email, password, name, surname, phone) "
+        "VALUES(?,?,?,?,?,?)"
+    )
     print(query)
-    db.execute(query)
+    db.execute(
+        query,
+        ("admin", "admin@energy.org", passhash, "Harley", "Davidson", "123456789"),
+    )
+
 
 init_db()
 
+
 @app.get("/register")
 async def register(email: str, password: str, name: str, surname: str, phone: str):
-    #1) Email Check
-    query = f"SELECT userid FROM users where email = '{email}' LIMIT 1"
-    print(query)
-    response = db.execute(query)
+    # 1) Email Check
+    query = "SELECT userid FROM users where email = ? LIMIT 1"
+    response = db.execute(query, (email,))
     users = response.fetchall()
     if len(users):
         return "Email already exists"
 
-    #2) Store
-    hash = hashlib.blake2b(password.encode()).hexdigest()
-    query = f"INSERT INTO users(role, email, password, name, surname, phone) VALUES(" \
-            f"'user'," \
-            f"'{email}'," \
-            f"'{hash}'," \
-            f"'{name}'," \
-            f"'{surname}'," \
-            f"'{phone}' )"
-    print(query)
-    db.execute(query)
+    # 2) Store Hashed Password
+    passhash = hashlib.blake2b(password.encode()).hexdigest()
+    query = "INSERT INTO users(role, email, password, name, surname, phone) VALUES(?, ?, ?, ?, ?, ?)"
+    db.execute(query, ("user", email, passhash, name, surname, phone))
 
-    #3) Read again for userid
-    query = f"SELECT * FROM users where email = '{email}' and password='{hash}' LIMIT 1"
-    print(query)
-    response = db.execute(query)
+    # 3) Read again for userid
+    query = "SELECT * FROM users where email = ? and password = ? LIMIT 1"
+    response = db.execute(query, (email, passhash))
     users = response.fetchall()
     user = row_to_user(users[0])
-    print(user)
 
-    #4) Generate Token
-    token = uuid.uuid4()
+    # 4) Generate Token
+    token = str(uuid.uuid4())
 
-    #5) Save Session
-    query = f"INSERT INTO sessions('token','userid') VALUES(" \
-            f"'{token}'," \
-            f"'{user['userid']}')"
-    print(query)
-    db.execute(query)
+    # 5) Save Session
+    query = "INSERT INTO sessions(token, userid) VALUES(?, ?)"
+    db.execute(query, (token, user["userid"]))
 
-    #6) Ret clean data
-    user['password'] = "HASH"
-    user['token'] = token
+    # 6) Return Clean Data
+    user["password"] = "HASH"
+    user["token"] = token
     return user
 
 
 @app.get("/login")
 async def login(email: str, password: str):
-    #1) Get User
-    hash = hashlib.blake2b(password.encode()).hexdigest()
-    query = f"SELECT * FROM users where email = '{email}' and password='{hash}'  LIMIT 1"
+    # 1) Get User
+    query = "SELECT * FROM users where email = ? and password=? LIMIT 1"
     print(query)
-    response = db.execute(query)
+    response = db.execute(
+        query, (email, hashlib.blake2b(password.encode()).hexdigest())
+    )
     users = response.fetchall()
     if len(users) == 0:
         return "Wrong Email or Password"
@@ -132,53 +125,50 @@ async def login(email: str, password: str):
     user = row_to_user(users[0])
     print(user)
 
-    #2) Generate Token
-    token = uuid.uuid4()
+    # 2) Generate Token
+    token = str(uuid.uuid4())
 
-    #3) Save Sesion
-    query = f"INSERT INTO sessions('token','userid') VALUES(" \
-            f"'{token}'," \
-            f"'{user['userid']}')"
+    # 3) Save Session
+    query = "INSERT INTO sessions(token, userid) VALUES(?, ?)"
     print(query)
-    db.execute(query)
+    db.execute(query, (token, user["userid"]))
 
-    #4) Ret clean data
-    user['password'] = "HASH"
-    user['token'] = token
+    # 4) Ret clean data
+    user["password"] = "HASH"
+    user["token"] = token
     return user
+
 
 @app.get("/get")
 async def get(token: str):
-    #1) Get Session
-    query = f"SELECT userid FROM sessions where token = '{token}' LIMIT 1"
-    print(query)
-    response = db.execute(query)
+    # 1) Get Session
+    query = "SELECT userid FROM sessions where token = ? LIMIT 1"
+    response = db.execute(query, (token,))
     sessions = response.fetchall()
     if len(sessions) == 0:
         return "Invalid token"
     userid = sessions[0][0]
 
     # 2) Get User
-    query = f"SELECT * FROM users where userid = '{userid}' LIMIT 1"
-    print(query)
-    response = db.execute(query)
+    query = "SELECT * FROM users where userid = ? LIMIT 1"
+    response = db.execute(query, (userid,))
     users = response.fetchall()
     if len(users) == 0:
         return "Invalid token"
     user = row_to_user(users[0])
-    print(user)
 
-    #3) Ret clean data
-    user['password'] = "HASH"
-    user['token'] = token
+    # 3) Ret clean data
+    user["password"] = "HASH"
+    user["token"] = token
     return user
+
 
 @app.get("/logout")
 async def logout(token: str):
-    #1) Delete
-    query = f"DELETE FROM sessions where token = '{token}'"
+    # 1) Delete
+    query = "DELETE FROM sessions where token = ?"
     print(query)
-    db.execute(query)
+    db.execute(query, (token,))
 
-    #2) Ret empty data
+    # 2) Ret empty data
     return []

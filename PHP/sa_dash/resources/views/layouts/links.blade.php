@@ -17,6 +17,14 @@
 <div style="border-left: 1px solid #e5e7eb; margin: 0 10px 0 10px"></div>
 
 <x-menu.nav-link
+		:href="route('dashboard.index')"
+		:active="$controller == 'dashboard'">
+	Production/Consumption
+</x-menu.nav-link>
+
+<div style="border-left: 1px solid #e5e7eb; margin: 0 10px 0 10px"></div>
+
+<x-menu.nav-link
 		:href="route('auth.logout')">
 	Log out
 </x-menu.nav-link>

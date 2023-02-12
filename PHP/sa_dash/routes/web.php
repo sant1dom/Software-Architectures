@@ -63,3 +63,16 @@ foreach($methods as $method)
 	$r = Route::match("post", $entity . '/' . $method, [$controller, $method . "_send"]);
 	$r->name("$entity.$method" . "_send");
 }
+
+$entity = "dashboard";
+$controller = $prefix . ucfirst($entity) . 'Controller';
+
+$methods = [
+    "index",
+];
+
+foreach($methods as $method)
+{
+    $r = Route::match("get", $entity . '/' . $method, [$controller, $method]);
+    $r->name("$entity.$method");
+}
