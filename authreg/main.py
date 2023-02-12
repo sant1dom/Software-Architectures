@@ -1,10 +1,8 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from secrets import compare_digest
-from copy import deepcopy
 import uuid
 import hashlib
+import sqlite3
 
 app = FastAPI()
 
@@ -43,111 +41,132 @@ class Session():
     token: uuid.UUID
     userid: int
 
-users = []
-sessions = []
+db = sqlite3.connect("authreg.db")
 
-admin = User()
-admin.userid = 0,
-admin.role = "admin"
-admin.email = "admin@energy.org"
-admin.password = "bfcce2c19c8563fd4aa66f6ec607341ff25e5f6fe7fa520d7d1242d871385f23a3e8e80093120b4877d79535e10b182ae2ec8937d1f72f091e7178c9e4ff0f11"
-admin.name = "Harley"
-admin.surname = "Davidson"
-admin.phone = "123456789"
-users.append(admin)
+query = "CREATE TABLE users(" \
+        "userid INTEGER PRIMARY KEY, " \
+        "role, " \
+        "email UNIQUE, " \
+        "password, " \
+        "name, " \
+        "surname, " \
+        "phone )"
+db.execute(query)
+
+query = f"INSERT INTO users('role', 'email', 'password', 'name', 'surname', 'phone') VALUES(" \
+        f"'admin'," \
+        f"'admin@energy.org',," \
+        f"'bfcce2c19c8563fd4aa66f6ec607341ff25e5f6fe7fa520d7d1242d871385f23a3e8e80093120b4877d79535e10b182ae2ec8937d1f72f091e7178c9e4ff0f11'," \
+        f"'Harley'," \
+        f"'Davidson'," \
+        f"'123456789' )"
+db.execute(query)
+
+query = "CREATE TABLE sessions(token, userid)"
+db.execute(query)
 
 @app.get("/register")
 async def register(email: str, password: str, name: str, surname: str, phone: str):
+    #1) Email Check
+    query = f"SELECT userid FROM users where email = '{email}' LIMIT 1"
+    print(query)
+    response = db.execute(query)
+    users = response.fetchall()
+    if len(users):
+        return "Email already exists"
 
-    #Check Email
-    for user in users:
-        if user.email == email:
-            return "Email already exists"
-
-
-    #Create and store User
-    user = User()
-    user.userid = len(users)
-    user.email = email
-    user.name = name
-    user.surname = surname
-    user.phone = phone
-
-    #Hash Password
+    #2) Store
     hash = hashlib.blake2b(password.encode()).hexdigest()
-    user.password = hash
+    query = f"INSERT INTO users('role', 'email', 'password', 'name', 'surname', 'phone') VALUES(" \
+            f"'user'," \
+            f"'{email}'," \
+            f"'{hash}'," \
+            f"'{name}'," \
+            f"'{surname}'," \
+            f"'{phone}',"
+    db.execute(query)
 
-    users.append(user)
+    #3) Read again for userid
+    query = f"SELECT * FROM users where email = '{email}' and password='{hash}' LIMIT 1"
+    print(query)
+    response = db.execute(query)
+    users = response.fetchall()
+    user = users[0]
 
-    #Generate Token
+    #4) Generate Token
     token = uuid.uuid4()
 
-    # Create and store Session
-    session = Session()
-    session.token = token
-    session.userid = user.userid
-    sessions.append(session)
+    #5) Save Session
+    query = f"INSERT INTO sessions('token','userid') VALUES(" \
+            f"'{token}'," \
+            f"'{user.userid}')"
+    print(query)
+    db.execute(query)
 
-    #Return a cleaned user with token
-    retuser = deepcopy(user)
-    retuser.password = "HASH"
-    retuser.token = token
-
-    return retuser
+    #6) Ret clean data
+    user.password = "HASH"
+    user.token = token
+    return user
 
 
 @app.get("/login")
 async def login(email: str, password: str):
-
+    #1) Get User
     hash = hashlib.blake2b(password.encode()).hexdigest()
+    query = f"SELECT * FROM users where email = '{email}' and password='{hash}'  LIMIT 1"
+    print(query)
+    response = db.execute(query)
+    users = response.fetchall()
+    if len(users) == 0:
+        return "Wrong Email or Password"
+    user = users[0]
 
-    found = False
-    for user in users:
-        if user.email == email:
-            if user.password != hash:
-                return "Wrong Password"
-            else:
-                found = True
-                break
-
-    if not found:
-        return "Wrong Email"
-
-    #Generate Token
+    #2) Generate Token
     token = uuid.uuid4()
 
-    # Create and store Session
-    session = Session()
-    session.token = token
-    session.userid = user.userid
-    sessions.append(session)
+    #3) Save Sesion
+    query = f"INSERT INTO sessions('token','userid') VALUES(" \
+            f"'{token}'," \
+            f"'{user.userid}')"
+    print(query)
+    db.execute(query)
 
-    #Return a cleaned user with token
-    retuser = deepcopy(user)
-    retuser.password = "HASH"
-    retuser.token = token
-
-    return retuser
+    #4) Ret clean data
+    user.password = "HASH"
+    user.token = token
+    return user
 
 @app.get("/get")
 async def get(token: str):
-    for session in sessions:
-        if str(session.token) == str(token):
-            user = users[session.userid]
+    #1) Get Session
+    query = f"SELECT userid FROM sessions where token = '{token}' LIMIT 1"
+    print(query)
+    response = db.execute(query)
+    sessions = response.fetchall()
+    if len(sessions) == 0:
+        return "Invalid token"
+    session = sessions[0]
 
-            # Return a cleaned user with token
-            retuser = deepcopy(user)
-            retuser.password = "HASH"
-            retuser.token = token
+    # 2) Get User
+    query = f"SELECT * FROM users where token = '{session.userid}' LIMIT 1"
+    print(query)
+    response = db.execute(query)
+    users = response.fetchall()
+    if len(users) == 0:
+        return "Invalid token"
+    user = users[0]
 
-            return retuser
-
-    return "Invalid token"
+    #3) Ret clean data
+    user.password = "HASH"
+    user.token = token
+    return user
 
 @app.get("/logout")
 async def logout(token: str):
-    for k, session in enumerate(sessions):
-        if session.token == token:
-            del sessions[k]
+    #1) Delete
+    query = f"DELETE FROM sessions where token = '{token}'"
+    print(query)
+    db.execute(query)
 
+    #2) Ret empty data
     return []
