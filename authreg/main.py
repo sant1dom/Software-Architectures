@@ -20,50 +20,63 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-class User():
-    # auto generated, used as key
-    userid: int
-
-    # auto generated
-    role: str = "user"
-
-    # from registration, used for login
-    email: str
-    password: str
-
-    # from registration, not used for login
-    name: str
-    surname: str
-    phone: str
-
-class Session():
-    token: uuid.UUID
-    userid: int
-
 db = sqlite3.connect("authreg.db")
 
-query = "CREATE TABLE users(" \
-        "userid INTEGER PRIMARY KEY, " \
-        "role, " \
-        "email UNIQUE, " \
-        "password, " \
-        "name, " \
-        "surname, " \
-        "phone )"
-db.execute(query)
+def init_db():
+    #1) Users
+    query = "CREATE TABLE IF NOT EXISTS users(" \
+            "userid INTEGER PRIMARY KEY, " \
+            "role, " \
+            "email UNIQUE, " \
+            "password, " \
+            "name, " \
+            "surname, " \
+            "phone )"
+    print(query)
+    db.execute(query)
 
-query = f"INSERT INTO users('role', 'email', 'password', 'name', 'surname', 'phone') VALUES(" \
-        f"'admin'," \
-        f"'admin@energy.org',," \
-        f"'bfcce2c19c8563fd4aa66f6ec607341ff25e5f6fe7fa520d7d1242d871385f23a3e8e80093120b4877d79535e10b182ae2ec8937d1f72f091e7178c9e4ff0f11'," \
-        f"'Harley'," \
-        f"'Davidson'," \
-        f"'123456789' )"
-db.execute(query)
+    #2) Sessions
+    query = "CREATE TABLE IF NOT EXISTS sessions(token, userid)"
+    print(query)
+    db.execute(query)
 
-query = "CREATE TABLE sessions(token, userid)"
-db.execute(query)
+    #3) Admin check
+    query = f"SELECT userid FROM users where email = 'admin@energy.org' LIMIT 1"
+    print(query)
+    response = db.execute(query)
+    users = response.fetchall()
+    if len(users):
+        return
+
+    #4) Admin Store
+    query = f"INSERT INTO users('role', 'email', 'password', 'name', 'surname', 'phone') VALUES(" \
+            f"'admin'," \
+            f"'admin@energy.org'," \
+            f"'bfcce2c19c8563fd4aa66f6ec607341ff25e5f6fe7fa520d7d1242d871385f23a3e8e80093120b4877d79535e10b182ae2ec8937d1f72f091e7178c9e4ff0f11'," \
+            f"'Harley'," \
+            f"'Davidson'," \
+            f"'123456789' )"
+    print(query)
+    db.execute(query)
+
+init_db()
+
+def row_to_user(array):
+    return {
+        'userid': array[0],
+        'role': array[1],
+        'email': array[2],
+        'password': array[3],
+        'name': array[4],
+        'surname': array[5],
+        'phone': array[6],
+    }
+
+def row_to_session(array):
+    return {
+        'token': array[0],
+        'userid': array[1],
+    }
 
 @app.get("/register")
 async def register(email: str, password: str, name: str, surname: str, phone: str):
@@ -83,7 +96,8 @@ async def register(email: str, password: str, name: str, surname: str, phone: st
             f"'{hash}'," \
             f"'{name}'," \
             f"'{surname}'," \
-            f"'{phone}',"
+            f"'{phone}' )"
+    print(query)
     db.execute(query)
 
     #3) Read again for userid
@@ -91,7 +105,8 @@ async def register(email: str, password: str, name: str, surname: str, phone: st
     print(query)
     response = db.execute(query)
     users = response.fetchall()
-    user = users[0]
+    user = row_to_user(users[0])
+    print(user)
 
     #4) Generate Token
     token = uuid.uuid4()
@@ -99,13 +114,13 @@ async def register(email: str, password: str, name: str, surname: str, phone: st
     #5) Save Session
     query = f"INSERT INTO sessions('token','userid') VALUES(" \
             f"'{token}'," \
-            f"'{user.userid}')"
+            f"'{user['userid']}')"
     print(query)
     db.execute(query)
 
     #6) Ret clean data
-    user.password = "HASH"
-    user.token = token
+    user['password'] = "HASH"
+    user['token'] = token
     return user
 
 
@@ -119,7 +134,9 @@ async def login(email: str, password: str):
     users = response.fetchall()
     if len(users) == 0:
         return "Wrong Email or Password"
-    user = users[0]
+    print(users)
+    user = row_to_user(users[0])
+    print(user)
 
     #2) Generate Token
     token = uuid.uuid4()
@@ -127,13 +144,13 @@ async def login(email: str, password: str):
     #3) Save Sesion
     query = f"INSERT INTO sessions('token','userid') VALUES(" \
             f"'{token}'," \
-            f"'{user.userid}')"
+            f"'{user['userid']}')"
     print(query)
     db.execute(query)
 
     #4) Ret clean data
-    user.password = "HASH"
-    user.token = token
+    user['password'] = "HASH"
+    user['token'] = token
     return user
 
 @app.get("/get")
@@ -145,20 +162,22 @@ async def get(token: str):
     sessions = response.fetchall()
     if len(sessions) == 0:
         return "Invalid token"
-    session = sessions[0]
+    session = row_to_session(sessions[0])
+    print(session)
 
     # 2) Get User
-    query = f"SELECT * FROM users where token = '{session.userid}' LIMIT 1"
+    query = f"SELECT * FROM users where token = '{session['userid']}' LIMIT 1"
     print(query)
     response = db.execute(query)
     users = response.fetchall()
     if len(users) == 0:
         return "Invalid token"
-    user = users[0]
+    user = row_to_user(users[0])
+    print(user)
 
     #3) Ret clean data
-    user.password = "HASH"
-    user.token = token
+    user['password'] = "HASH"
+    user['token'] = token
     return user
 
 @app.get("/logout")
