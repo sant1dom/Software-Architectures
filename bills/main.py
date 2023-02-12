@@ -98,7 +98,7 @@ def init_db():
 init_db()
 
 @app.get("/getAll")
-def getAll(userid: int):
+async def getAll(userid: int):
     query = f"SELECT * FROM bills where userid = '{userid}'"
     print(query)
     response = db.execute(query)
@@ -111,7 +111,7 @@ def getAll(userid: int):
 
 
 @app.get("/getId")
-def getId(userid: int, billid: int):
+async def getId(userid: int, billid: int):
     query = f"SELECT * FROM bills where userid = '{userid} and billid = '{billid}' LIMIT 1"
     print(query)
     response = db.execute(query)

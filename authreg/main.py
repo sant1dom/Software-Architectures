@@ -156,11 +156,11 @@ async def get(token: str):
     sessions = response.fetchall()
     if len(sessions) == 0:
         return "Invalid token"
-    session = sessions[0][0]
-    print(session)
+    session_userid = sessions[0][0]
+    print(session_userid)
 
     # 2) Get User
-    query = f"SELECT * FROM users where token = '{session['userid']}' LIMIT 1"
+    query = f"SELECT * FROM users where token = '{session_userid}' LIMIT 1"
     print(query)
     response = db.execute(query)
     users = response.fetchall()
