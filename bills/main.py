@@ -51,7 +51,7 @@ def init_db():
     print(query)
     db.execute(query)
 
-    query = f"SELECT userid FROM bills LIMIT 1"
+    query = f"SELECT billid FROM bills LIMIT 1"
     print(query)
     response = db.execute(query)
     bills = response.fetchall()
@@ -75,7 +75,7 @@ def init_db():
 
     for userid in range(1, 10):
         for houseid in range(140, 145):
-            address = fake.address()
+            address = fake.address().replace("\n", "").replace("'", "")
             for i in range(12):
                 date = dates[i]
                 energy_production = random.uniform(250, 350)
@@ -91,7 +91,7 @@ def init_db():
                         f"'{date}'," \
                         f"'{total}'," \
                         f"'{address}'," \
-                        f"'{paid})"
+                        f"'{paid}')"
                 print(query)
                 db.execute(query)
 
