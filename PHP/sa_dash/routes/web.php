@@ -15,64 +15,24 @@ use Illuminate\Support\Facades\Route;
 
 $prefix = "App\Http\Controllers\\";
 
-$entity = "bill";
-$controller = $prefix . ucfirst($entity) . 'Controller';
+$entities = [
+    "bill" => ["index", "show"],
+    "prediction" => ["index", "consumption", "production", "future"],
+    "auth" => ["login", "register", "logout"],
+    "dashboard" => ["index"]
+];
 
-$r = Route::match("get", $entity . '/', [$controller, "index"]);
-$r->name("$entity.index");
-
-$r = Route::match("get", $entity . '/show', [$controller, "show"]);
-$r->name("$entity.show");
+foreach ($entities as $entity => $methods) {
+    $controller = $prefix . ucfirst($entity) . 'Controller';
+    foreach ($methods as $method) {
+        Route::match("get", "$entity/$method", [$controller, $method])->name("$entity.$method");
+        if ($entity === "auth") {
+            Route::match("post", "$entity/$method", [$controller, "{$method}_send"])->name("$entity.$method" . "_send");
+        }
+    }
+}
 
 Route::get('/', function () {
-	return redirect(route("bill.index"));
+    return redirect(route("bill.index"));
 });
 
-$entity = "prediction";
-$controller = $prefix . ucfirst($entity) . 'Controller';
-
-$methods = [
-	"index",
-	"consumption",
-	"production",
-	"future",
-];
-
-foreach($methods as $method)
-{
-	$r = Route::match("get", $entity . '/' . $method, [$controller, $method]);
-	$r->name("$entity.$method");
-}
-
-
-
-$entity = "auth";
-$controller = $prefix . ucfirst($entity) . 'Controller';
-
-$methods = [
-	"login",
-	"register",
-	"logout",
-];
-
-foreach($methods as $method)
-{
-	$r = Route::match("get", $entity . '/' . $method, [$controller, $method]);
-	$r->name("$entity.$method");
-
-	$r = Route::match("post", $entity . '/' . $method, [$controller, $method . "_send"]);
-	$r->name("$entity.$method" . "_send");
-}
-
-$entity = "dashboard";
-$controller = $prefix . ucfirst($entity) . 'Controller';
-
-$methods = [
-    "index",
-];
-
-foreach($methods as $method)
-{
-    $r = Route::match("get", $entity . '/' . $method, [$controller, $method]);
-    $r->name("$entity.$method");
-}

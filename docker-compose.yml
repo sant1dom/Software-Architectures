@@ -23,18 +23,6 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_CREATE_TOPICS: "houses:1:1"
-  
-#  energy-production:
-#    image: energy-production
-#    restart: always
-#    container_name: energy-production
-#    build:
-#      context: ./energy_production
-#      dockerfile: Dockerfile
-#    volumes:
-#      - /data/energy_production
-#    depends_on:
-#      - broker
 
   telegraf:
     image: telegraf
@@ -108,6 +96,10 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=adminpass
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
     depends_on:
       - influxdb
 
