@@ -23,7 +23,7 @@
 				</x-table.td>
 			</tr>
 			<tr>
-				<x-table.th>Info1</x-table.th>
+				<x-table.th>Info2</x-table.th>
 				<x-table.td>
 					{{ $prediction->info2 }}
 				</x-table.td>
