@@ -74,26 +74,26 @@ def init_db():
     ]
 
     for userid in range(1, 10):
-        for houseid in range(140, 145):
-            address = fake.address().replace("\n", "").replace("'", "")
-            for i in range(12):
-                date = dates[i]
-                energy_production = random.uniform(250, 350)
-                energy_consumption = random.uniform(250, 350)
-                total = random.uniform(100, 400)
-                paid = random.choice([True, False])
+        houseid = 140 + userid
+        address = fake.address().replace("\n", "").replace("'", "")
+        for i in range(12):
+            date = dates[i]
+            energy_production = random.uniform(250, 350)
+            energy_consumption = random.uniform(250, 350)
+            total = random.uniform(100, 400)
+            paid = random.choice([True, False])
 
-                query = f"INSERT INTO bills(houseid, userid, energy_production, energy_consumption, date, total, address, paid) VALUES(" \
-                        f"'{houseid}'," \
-                        f"'{userid}'," \
-                        f"'{energy_production}',"\
-                        f"'{energy_consumption}'," \
-                        f"'{date}'," \
-                        f"'{total}'," \
-                        f"'{address}'," \
-                        f"'{paid}')"
-                print(query)
-                db.execute(query)
+            query = f"INSERT INTO bills(houseid, userid, energy_production, energy_consumption, date, total, address, paid) VALUES(" \
+                    f"'{houseid}'," \
+                    f"'{userid}'," \
+                    f"'{energy_production}',"\
+                    f"'{energy_consumption}'," \
+                    f"'{date}'," \
+                    f"'{total}'," \
+                    f"'{address}'," \
+                    f"'{paid}')"
+            print(query)
+            db.execute(query)
 
 init_db()
 
