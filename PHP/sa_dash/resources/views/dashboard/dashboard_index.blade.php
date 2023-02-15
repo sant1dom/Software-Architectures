@@ -7,7 +7,7 @@
     <x-slot name="main_info">
         <div class="py-2">
             <h1 class="text-2xl font-semibold text-gray-900">Dashboard</h1>
-            @if ($auth['role'] == 'admin')
+            @if ($auth->role == 'admin')
                 <label for="house_id">House ID</label>
                 <select name="house_id" id="house_id">
                     @foreach ($houses as $house)
