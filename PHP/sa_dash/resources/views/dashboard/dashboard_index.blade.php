@@ -15,7 +15,7 @@
                     @endforeach
                 </select>
             @endif
-            <iframe id="iframe" src="http://localhost:3000/d/L2DfNh0Vz/try?orgId=1&refresh=10s&var-house_id=140&var-time_avg=1m&kiosk&theme=light" width="100%" height=1200px frameborder="0" scrolling="no" style="pointer-events: none;"></iframe>
+            <iframe id="iframe" src="http://localhost:3000/d/L2DfNh0Vz/try?orgId=1&refresh=10s&var-house_id={{$auth->userid+140}}&var-time_avg=1m&kiosk&theme=light" width="100%" height=1200px frameborder="0" scrolling="no" style="pointer-events: none;"></iframe>
         </div>
     </x-slot>
 </x-app-layout>
