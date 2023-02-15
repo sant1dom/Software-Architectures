@@ -51,7 +51,7 @@ def init_db():
     print(query)
     db.execute(query)
 
-    query = f"SELECT billid FROM bills LIMIT 1"
+    query = "SELECT billid FROM bills LIMIT 1"
     print(query)
     response = db.execute(query)
     bills = response.fetchall()
@@ -83,25 +83,18 @@ def init_db():
             total = random.uniform(100, 400)
             paid = random.choice([True, False])
 
-            query = f"INSERT INTO bills(houseid, userid, energy_production, energy_consumption, date, total, address, paid) VALUES(" \
-                    f"'{houseid}'," \
-                    f"'{userid}'," \
-                    f"'{energy_production}',"\
-                    f"'{energy_consumption}'," \
-                    f"'{date}'," \
-                    f"'{total}'," \
-                    f"'{address}'," \
-                    f"'{paid}')"
+            query = "INSERT INTO bills(houseid, userid, energy_production, energy_consumption, date, total, address, paid) VALUES(?, ?, ?, ?, ?, ?, ?, ?)"
+
             print(query)
-            db.execute(query)
+            db.execute(query, (houseid, userid, energy_production, energy_consumption, date, total, address, paid))
 
 init_db()
 
 @app.get("/getAll")
 async def getAll(userid: int):
-    query = f"SELECT * FROM bills where userid = '{userid}'"
+    query = "SELECT * FROM bills where userid = ?"
     print(query)
-    response = db.execute(query)
+    response = db.execute(query, (userid,))
     rows = response.fetchall()
 
     bills = []
@@ -112,9 +105,9 @@ async def getAll(userid: int):
 
 @app.get("/getId")
 async def getId(userid: int, billid: int):
-    query = f"SELECT * FROM bills where userid = '{userid}' and billid = '{billid}' LIMIT 1"
+    query = "SELECT * FROM bills where userid = ? and billid = ? LIMIT 1"
     print(query)
-    response = db.execute(query)
+    response = db.execute(query, (userid, billid))
     rows = response.fetchall()
 
     for row in rows:
