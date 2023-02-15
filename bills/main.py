@@ -4,14 +4,10 @@ from faker import Faker
 import random
 import sqlite3
 
-fake = Faker('it_IT')
+fake = Faker("it_IT")
 app = FastAPI()
 
-origins = [
-    "http://localhost",
-    "http://localhost:8080",
-    "http://localhost:8081"
-]
+origins = ["http://localhost", "http://localhost:8080", "http://localhost:8081"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -20,6 +16,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 def row_to_bill(array):
     return {
@@ -34,20 +31,24 @@ def row_to_bill(array):
         "address": array[8],
     }
 
+
 db = sqlite3.connect("bills.db")
 
+
 def init_db():
-    #1) Users
-    query = "CREATE TABLE IF NOT EXISTS bills(" \
-            "billid INTEGER PRIMARY KEY, " \
-            "houseid, " \
-            "userid, " \
-            "energy_production, " \
-            "energy_consumption, " \
-            "date, " \
-            "total, "\
-            "paid, " \
-            "address )"
+    # 1) Users
+    query = (
+        "CREATE TABLE IF NOT EXISTS bills("
+        "billid INTEGER PRIMARY KEY, "
+        "houseid, "
+        "userid, "
+        "energy_production, "
+        "energy_consumption, "
+        "date, "
+        "total, "
+        "paid, "
+        "address )"
+    )
     print(query)
     db.execute(query)
 
@@ -70,7 +71,7 @@ def init_db():
         "Sep 2022",
         "Oct 2022",
         "Nov 2022",
-        "Dec 2022"
+        "Dec 2022",
     ]
 
     for userid in range(1, 10):
@@ -86,9 +87,23 @@ def init_db():
             query = "INSERT INTO bills(houseid, userid, energy_production, energy_consumption, date, total, address, paid) VALUES(?, ?, ?, ?, ?, ?, ?, ?)"
 
             print(query)
-            db.execute(query, (houseid, userid, energy_production, energy_consumption, date, total, address, paid))
+            db.execute(
+                query,
+                (
+                    houseid,
+                    userid,
+                    energy_production,
+                    energy_consumption,
+                    date,
+                    total,
+                    address,
+                    paid,
+                ),
+            )
+
 
 init_db()
+
 
 @app.get("/getAll")
 async def getAll(userid: int):
