@@ -15,11 +15,10 @@ class Model extends BaseModel
 	{
 		$url = "http://api_gateway/index.php?";
 
-		foreach ($request as $k => $v)
+		foreach ($request as $key => $value)
 		{
-			$url .= $k . "=" . $v . '&';
+			$url .= $key . "=" . urlencode($value) . '&';
 		}
-
 		$raw_response = file_get_contents($url);
 
 		$response = json_decode($raw_response);

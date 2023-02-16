@@ -48,7 +48,7 @@ class Service
 		{
 			foreach($data as $key => $value)
 			{
-				$url .= $key . '=' . $value . '&';
+				$url .= $key . "=" . urlencode($value) . '&';
 			}
 			$raw_response = file_get_contents($url);
 		}
