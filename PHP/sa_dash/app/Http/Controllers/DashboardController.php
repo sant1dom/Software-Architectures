@@ -22,7 +22,7 @@ class DashboardController extends Controller
             ]
         ];
         $context = stream_context_create($options);
-        $response = file_get_contents(' http://influxdb:8086/api/v2/orgs', false, $context);
+        $response = file_get_contents('http://influxdb:8086/api/v2/orgs', false, $context);
 
         $decoded_response = json_decode($response, true);
 
